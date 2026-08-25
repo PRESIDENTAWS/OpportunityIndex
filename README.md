@@ -1,1 +1,1 @@
-# OpportunityIndex
+# Opportunity Index
