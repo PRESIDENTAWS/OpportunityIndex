@@ -1,0 +1,33 @@
+import { scoreTier } from "@/lib/scoring";
+
+const TIER_STYLE = {
+  high: { bg: "var(--score-bg)", fg: "var(--score-fg)" },
+  mid: { bg: "var(--score-mid-bg)", fg: "var(--score-mid-fg)" },
+  low: { bg: "var(--bg-inset)", fg: "var(--fg-muted)" },
+} as const;
+
+interface ScoreBadgeProps {
+  score: number;
+  size?: "sm" | "md" | "lg";
+  className?: string;
+}
+
+/** The green score pill used in every ranked list. */
+export function ScoreBadge({ score, size = "md", className = "" }: ScoreBadgeProps) {
+  const style = TIER_STYLE[scoreTier(score)];
+  const dimensions = {
+    sm: "min-w-[2.1rem] px-1.5 py-0.5 text-xs",
+    md: "min-w-[2.5rem] px-2 py-1 text-sm",
+    lg: "min-w-[4rem] px-3 py-2 text-2xl",
+  }[size];
+
+  return (
+    <span
+      className={`inline-flex items-center justify-center rounded-[var(--radius-brand)] font-semibold tabular-nums ${dimensions} ${className}`}
+      style={{ backgroundColor: style.bg, color: style.fg }}
+      title={`Overall Score ${score} of 100`}
+    >
+      {score}
+    </span>
+  );
+}
