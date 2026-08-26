@@ -1,55 +1,63 @@
 # Opportunity Index
 
 The independent index of side hustles, businesses, franchises, and acquisition
-opportunities — every entry scored on the same six factors.
+opportunities — every entry scored on the same six factors, with the formula
+published.
 
 **Find. Evaluate. Build. Grow.**
 
-## Stack
+---
 
-| Concern | Choice |
+## What is in this repository
+
+| Path | What it is |
 | --- | --- |
-| Framework | Next.js 16 (App Router, React 19, TypeScript) |
-| Styling | Tailwind CSS v4, CSS-first config with brand tokens |
-| Type | Space Grotesk via `next/font/google` |
-| Data | Typed seed modules under `src/data`, read through `src/lib/queries.ts` |
+| [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md) | What the product is, who it serves, and what it deliberately is not |
+| [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) | **The contract.** Conventions, enums, the scoring model, table-by-table detail, and the rules client code must follow |
+| [`docs/LAUNCH_PLAN.md`](docs/LAUNCH_PLAN.md) | Phased plan, sequenced by dependency |
+| [`supabase/schema.sql`](supabase/schema.sql) | Canonical PostgreSQL schema: tables, enums, constraints, indexes, RLS, triggers |
+| [`supabase/seed.sql`](supabase/seed.sql) | Reference data and seed content; idempotent |
+| [`data/opportunities.seed.json`](data/opportunities.seed.json) | Canonical opportunity dataset, 26 records |
+| [`.env.example`](.env.example) | Environment template |
 
-No runtime dependencies beyond Next and React — the horizon artwork, the OI
-monogram, and every icon are inline SVG or CSS, so there are no image requests
-on any page.
+`supabase/schema.sql` and `docs/DATA_MODEL.md` are the contract. Application
+code conforms to them, not the reverse. Where the document and the schema
+disagree, the schema wins — it is the executable artifact.
 
-## Getting started
+## Getting a database up
+
+Requires PostgreSQL 16 or later. **Run from the repository root** — `seed.sql`
+reads `data/opportunities.seed.json` by relative path.
 
 ```bash
-npm install
-npm run dev        # http://localhost:3000
-npm run build      # production build
-npm run typecheck  # tsc --noEmit
-npm run lint       # eslint
+createdb opportunity_index
+export DATABASE_URL=postgresql://localhost/opportunity_index
+
+psql "$DATABASE_URL" -f supabase/schema.sql
+psql "$DATABASE_URL" -f supabase/seed.sql
 ```
 
-## Design system
+You should end up with:
 
-Brand tokens live at the top of `src/app/globals.css`:
+| Table | Rows |
+| --- | --- |
+| `categories` | 5 |
+| `scoring_factors` | 6 |
+| `opportunities` | 26 |
+| `opportunity_steps` | 130 |
+| `business_listings` | 6 |
+| `franchises` | 6 |
+| `funding_programs` | 6 |
+| `research_pieces` | 6 |
 
-| Token | Hex | Name |
-| --- | --- | --- |
-| `--color-space` | `#0D1117` | Space Black |
-| `--color-slate-deep` | `#1A1F2B` | Deep Slate |
-| `--color-horizon` | `#2563EB` | Horizon Blue |
-| `--color-mist` | `#F5F7FA` | Light Gray |
+Re-running `seed.sql` is safe: every insert upserts on its natural key, so it
+refreshes content rather than duplicating or failing.
 
-Everything the UI paints goes through semantic variables (`--bg`, `--fg`,
-`--border`, `--accent`, …) that are redefined under `.dark`. The theme is set on
-`<html>` before first paint by an inline script, and `ThemeToggle` reads it with
-`useSyncExternalStore` so the server render and the first client render agree.
+## The scoring model
 
-## Scoring
-
-Every score on the site comes from one function — `overallScore()` in
-`src/lib/scoring.ts` — so a number on a card can never drift from the number on
-a detail page. It is a weighted blend of six factors, each rated 0–100 where
-higher is always better for the operator:
+Six factors, each `0..100`, where **higher is always better for the operator** —
+so a high "Low Startup Cost" score means cheap to start, and a high "Competitive
+Room" score means the field is *not* crowded.
 
 | Factor | Weight |
 | --- | --- |
@@ -60,45 +68,57 @@ higher is always better for the operator:
 | Scalability | 12% |
 | Competitive Room | 8% |
 
-Weights are declared once in `SCORE_FACTORS` (`src/lib/types.ts`) and are read by
-the scorer, the detail-page breakdown, the compare tool, and `/methodology`, so
-the published formula and the computed one cannot diverge.
+`opportunities.overall_score` is a **generated column**. No client can write it,
+so a published score can never disagree with the factors behind it. A constraint
+trigger holds the weights in `scoring_factors` to a sum of exactly `1.000`.
 
-## Routes
+Read the score. Never recompute it client-side.
 
-```
-/                            Homepage — hero, category rail, ranked index
-/hustles                     Full index with filters and sorting
-/hustles/[slug]              Opportunity detail + score breakdown
-/businesses                  Category overview
-/businesses/[category]       Filtered index per category
-/businesses-for-sale[/slug]  Acquisition listings
-/franchises[/slug]           Franchise concepts
-/funding[/slug]              Funding routes compared
-/research[/slug]             Reports, guides, data studies
-/tools                       Startup cost · break-even · compare
-/about /methodology /advertise /contact /newsletter
-/privacy /terms /disclaimer
-```
+## Security posture
 
-Filters, search, and sort are held in the URL and applied on the server, so any
-filtered view is shareable, survives a refresh, and renders without JavaScript.
+Row Level Security is enabled on every table.
 
-## Advertising
+- Anonymous and authenticated callers read **published rows only**.
+- Anonymous callers cannot write any content.
+- Newsletter signup is the single permitted anonymous write, and there is
+  deliberately no read policy — the subscriber list is not retrievable through
+  the public API.
+- All content writes go through `service_role`.
 
-`AdSlot` renders labelled, correctly-sized placeholders at each IAB format
-(728×90, 300×600, 300×250) so no layout shifts when real creative is dropped in.
-Sponsored placements are visually distinct and labelled. No placement can affect
-a score, a rank, or inclusion — stated on `/methodology` and `/advertise`, and
-true in the code: no scoring input references advertising.
+`SUPABASE_SECRET_KEY` bypasses RLS entirely. It is server-only: never prefixed
+with `NEXT_PUBLIC_`, never imported into a client component, never logged.
 
-## Data
+## Verification
 
-Figures are researched estimates for a typical solo operator in a mid-sized US
-market, not guarantees. Counts shown in the UI are computed from the actual
-dataset rather than hard-coded, so nothing on screen claims more coverage than
-the index holds.
+The schema and seed are validated against a real PostgreSQL 16 instance, not
+just reviewed. The invariants that must keep passing are listed in
+[DATA_MODEL.md § Verification](docs/DATA_MODEL.md#verification) and cover clean
+application, expected row counts, seed idempotency, weight sum, score
+correctness, RLS behaviour for anonymous callers, and constraint enforcement.
 
-`src/lib/queries.ts` is the only module the UI reads data through. Swapping the
-seed modules for a database is a change to that file and the `src/data` imports;
-no page or component reads a dataset directly.
+There is **no automated test suite in this repository yet**. CI arrives in
+Phase 3 of the launch plan. Until it exists, no claim that "tests pass" is
+meaningful here.
+
+## Branches
+
+| Branch | Owns |
+| --- | --- |
+| `codex/foundation` | This contract: docs, schema, seed data |
+| `claude/frontend` | The Next.js application |
+
+The frontend was built before this contract existed and holds equivalent data in
+TypeScript modules with different names and shapes. Reconciling it is **Phase 1**
+of the launch plan, which lists the known divergences.
+
+## Data honesty
+
+Cost, profit, and time figures are researched estimates for a typical solo
+operator in a mid-sized US market. They are not guarantees, not survey averages,
+and not projections for any individual.
+
+Acquisition listings, franchise terms, and lending rates are supplied by third
+parties. Inclusion is not verification.
+
+Counts shown to readers are derived from the data. If the index holds 26 models,
+the interface says 26.

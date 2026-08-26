@@ -1,0 +1,1878 @@
+{
+  "contract_version": "1.0.0",
+  "description": "Canonical seed dataset for the Opportunity Index. Field names and value domains match supabase/schema.sql exactly; see docs/DATA_MODEL.md for the contract. Money is integer whole US dollars. Figures are researched estimates for a typical solo operator in a mid-sized US market, not guarantees.",
+  "opportunities": [
+    {
+      "slug": "digital-product-creator",
+      "name": "Digital Product Creator",
+      "tagline": "Sell templates, presets, and toolkits that cost nothing to reproduce",
+      "icon": "pencil",
+      "category_slug": "online",
+      "startup_cost_min": 100,
+      "startup_cost_max": 500,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 1000,
+      "monthly_profit_max": 5000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 15,
+      "flexibility": "anywhere",
+      "summary": "You build a digital asset once — a Notion template, a Lightroom preset pack, a spreadsheet model, a set of design files — and sell it repeatedly with no per-unit cost. Margins sit near 100% after platform fees, and the whole operation runs from a laptop. The work is front-loaded: the first product takes weeks, the tenth takes days, and distribution matters more than the product itself.",
+      "factor_demand": 92,
+      "factor_profit_potential": 88,
+      "factor_startup_cost": 95,
+      "factor_time_to_revenue": 88,
+      "factor_scalability": 98,
+      "factor_competition": 72,
+      "skills": [
+        "Design or domain expertise",
+        "Copywriting",
+        "Audience building"
+      ],
+      "pros": [
+        "Near-zero marginal cost — the hundredth sale costs the same as the first",
+        "No inventory, shipping, or customer scheduling",
+        "Products compound; a back catalogue keeps earning"
+      ],
+      "cons": [
+        "Discovery is the whole game, and most creators underestimate it",
+        "Marketplace fees and algorithm changes are outside your control",
+        "Easy to copy — expect imitators within months of any hit"
+      ],
+      "tools": [
+        "Gumroad",
+        "Notion",
+        "Figma",
+        "ConvertKit"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Pick a painful, narrow problem",
+          "detail": "Look for tasks people already solve badly in spreadsheets or by hand. Narrower beats broader for a first product."
+        },
+        {
+          "position": 2,
+          "title": "Build the smallest useful version",
+          "detail": "One template, not a suite. Ship in under three weeks or the project stalls."
+        },
+        {
+          "position": 3,
+          "title": "Price at value, not effort",
+          "detail": "A $29 template that saves a freelancer six hours is an easy purchase. A $9 one signals disposable."
+        },
+        {
+          "position": 4,
+          "title": "Publish where buyers already are",
+          "detail": "Gumroad, Etsy, or a marketplace native to your niche before your own storefront."
+        },
+        {
+          "position": 5,
+          "title": "Build the audience that sells product two",
+          "detail": "Every buyer should land on an email list. That list is the real asset."
+        }
+      ],
+      "reviewed_at": "2026-08-04"
+    },
+    {
+      "slug": "e-commerce-store",
+      "name": "E-Commerce Store",
+      "tagline": "Own the brand, the margin, and the customer relationship",
+      "icon": "cart",
+      "category_slug": "ecommerce",
+      "startup_cost_min": 500,
+      "startup_cost_max": 5000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2000,
+      "monthly_profit_max": 20000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 20,
+      "flexibility": "anywhere",
+      "summary": "A branded store selling physical products you source, private-label, or make. Unlike dropshipping, you hold inventory — which is exactly why the margins and the defensibility are better. The constraint is cash: every dollar of growth ties up another dollar of stock, and the businesses that fail usually die solvent-on-paper but out of cash.",
+      "factor_demand": 90,
+      "factor_profit_potential": 94,
+      "factor_startup_cost": 62,
+      "factor_time_to_revenue": 72,
+      "factor_scalability": 95,
+      "factor_competition": 64,
+      "skills": [
+        "Sourcing and negotiation",
+        "Paid acquisition",
+        "Basic operations"
+      ],
+      "pros": [
+        "Real enterprise value — stores with traction sell for 2-4x annual profit",
+        "You own the customer list and the repeat purchase",
+        "Product margin gives room to buy traffic profitably"
+      ],
+      "cons": [
+        "Inventory ties up cash and can go stale",
+        "Ad costs rise every year; unit economics need constant attention",
+        "Returns, chargebacks, and support are a permanent tax on your time"
+      ],
+      "tools": [
+        "Shopify",
+        "Meta Ads",
+        "Klaviyo",
+        "Alibaba"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Choose a category you can restock reliably",
+          "detail": "Lead times and MOQs decide your cash cycle more than product choice does."
+        },
+        {
+          "position": 2,
+          "title": "Validate with a small first order",
+          "detail": "A few hundred units, sold manually, tells you more than any survey."
+        },
+        {
+          "position": 3,
+          "title": "Get unit economics on paper",
+          "detail": "Landed cost, fees, shipping, returns, and target CAC. If contribution margin is under 40%, fix it before scaling."
+        },
+        {
+          "position": 4,
+          "title": "Launch a narrow catalogue",
+          "detail": "Three to five SKUs. Depth beats breadth until you know what sells."
+        },
+        {
+          "position": 5,
+          "title": "Buy traffic only once organic converts",
+          "detail": "Paid ads amplify a working funnel; they do not create one."
+        }
+      ],
+      "reviewed_at": "2026-08-11"
+    },
+    {
+      "slug": "social-media-manager",
+      "name": "Social Media Manager",
+      "tagline": "Run the accounts small businesses know they are neglecting",
+      "icon": "camera",
+      "category_slug": "service",
+      "startup_cost_min": 0,
+      "startup_cost_max": 500,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 1000,
+      "monthly_profit_max": 4000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 20,
+      "flexibility": "remote",
+      "summary": "Local businesses and small brands need consistent posting, community replies, and a monthly report — and most owners will never do it themselves. Retainers run $500-$2,000 per client per month, and three to six clients is a full practice. The work is genuinely repeatable, which is what makes it a good first service business.",
+      "factor_demand": 88,
+      "factor_profit_potential": 74,
+      "factor_startup_cost": 98,
+      "factor_time_to_revenue": 92,
+      "factor_scalability": 72,
+      "factor_competition": 58,
+      "skills": [
+        "Content production",
+        "Copywriting",
+        "Client communication"
+      ],
+      "pros": [
+        "Starts at zero cost with tools you already have",
+        "Monthly retainers make income predictable",
+        "Skills transfer directly into higher-paid marketing work"
+      ],
+      "cons": [
+        "Crowded field — differentiation has to be niche or results",
+        "Clients judge you on metrics you only partly control",
+        "Revenue is capped by hours unless you hire"
+      ],
+      "tools": [
+        "Buffer",
+        "Canva",
+        "CapCut",
+        "Metricool"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Pick one industry",
+          "detail": "\"Social for dental practices\" wins the pitch that \"social media manager\" loses."
+        },
+        {
+          "position": 2,
+          "title": "Build two speculative case studies",
+          "detail": "Rework a real local business's feed and show the before/after. It replaces a portfolio."
+        },
+        {
+          "position": 3,
+          "title": "Price as a monthly retainer",
+          "detail": "Scope it precisely: post count, platforms, reporting cadence, revision limits."
+        },
+        {
+          "position": 4,
+          "title": "Systematise production",
+          "detail": "Batch a month of content in two days; the rest is scheduling and replies."
+        },
+        {
+          "position": 5,
+          "title": "Raise prices at every third client",
+          "detail": "Demand at your current price is the signal to move up."
+        }
+      ],
+      "reviewed_at": "2026-07-29"
+    },
+    {
+      "slug": "cleaning-service",
+      "name": "Cleaning Service",
+      "tagline": "Recurring local revenue with almost no technical barrier",
+      "icon": "home",
+      "category_slug": "local",
+      "startup_cost_min": 500,
+      "startup_cost_max": 2000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 3000,
+      "monthly_profit_max": 10000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 30,
+      "flexibility": "local",
+      "summary": "Residential and small-office cleaning is unglamorous, durable, and one of the fastest paths from zero to real monthly revenue. Recurring bi-weekly contracts mean a client won in month one is still paying in month twenty. The hard part is not cleaning — it is hiring and keeping reliable people once you stop doing the work yourself.",
+      "factor_demand": 90,
+      "factor_profit_potential": 80,
+      "factor_startup_cost": 82,
+      "factor_time_to_revenue": 90,
+      "factor_scalability": 78,
+      "factor_competition": 66,
+      "skills": [
+        "Scheduling",
+        "Hiring",
+        "Local marketing"
+      ],
+      "pros": [
+        "Recurring contracts produce stable, forecastable revenue",
+        "Cash-flow positive almost immediately — clients pay per visit",
+        "Genuinely sellable: cleaning books trade on established multiples"
+      ],
+      "cons": [
+        "Labour turnover is the defining operational problem",
+        "Physically demanding until you can afford to staff it",
+        "Insurance, bonding, and payroll compliance arrive early"
+      ],
+      "tools": [
+        "Jobber",
+        "Google Business Profile",
+        "Stripe",
+        "Gusto"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Choose residential or commercial",
+          "detail": "Residential starts faster; commercial pays more per contract and runs at night."
+        },
+        {
+          "position": 2,
+          "title": "Get insured and bonded first",
+          "detail": "Roughly $500-$1,200 a year, and it is the first thing a serious client asks for."
+        },
+        {
+          "position": 3,
+          "title": "Land the first ten clients by hand",
+          "detail": "Door hangers, neighbourhood groups, and Google Business Profile beat paid ads at this size."
+        },
+        {
+          "position": 4,
+          "title": "Standardise the checklist",
+          "detail": "A written per-room checklist is what lets someone else do the job to your standard."
+        },
+        {
+          "position": 5,
+          "title": "Hire before you are ready",
+          "detail": "Your first employee is the difference between a job and a business."
+        }
+      ],
+      "reviewed_at": "2026-08-14"
+    },
+    {
+      "slug": "website-developer",
+      "name": "Website Developer",
+      "tagline": "Project fees now, maintenance retainers forever",
+      "icon": "code",
+      "category_slug": "service",
+      "startup_cost_min": 100,
+      "startup_cost_max": 1000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2000,
+      "monthly_profit_max": 15000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "remote",
+      "summary": "Small businesses still buy websites, and they buy them from people who answer the phone. Build-outs run $2,000-$10,000; the durable money is in the $150-$500 monthly care plans that follow. AI tooling has compressed build time far more than it has compressed what clients will pay.",
+      "factor_demand": 82,
+      "factor_profit_potential": 86,
+      "factor_startup_cost": 92,
+      "factor_time_to_revenue": 80,
+      "factor_scalability": 74,
+      "factor_competition": 56,
+      "skills": [
+        "Front-end development",
+        "Design sense",
+        "Scoping and estimating"
+      ],
+      "pros": [
+        "High hourly value once you have a repeatable stack",
+        "Maintenance plans convert one-off projects into recurring revenue",
+        "Every project is a referral source in a tight local market"
+      ],
+      "cons": [
+        "Scope creep destroys margin on fixed-fee work",
+        "Template builders have compressed the low end of the market",
+        "Feast-or-famine unless you keep a pipeline while delivering"
+      ],
+      "tools": [
+        "Next.js",
+        "Webflow",
+        "Figma",
+        "Vercel"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Standardise on one stack",
+          "detail": "One CMS, one hosting setup, one component kit. Variety is what makes projects unprofitable."
+        },
+        {
+          "position": 2,
+          "title": "Sell outcomes, not pages",
+          "detail": "\"More booked calls\" is a budget line; \"a 5-page site\" is a commodity."
+        },
+        {
+          "position": 3,
+          "title": "Take 50% up front, always",
+          "detail": "It filters out the clients who were never going to pay."
+        },
+        {
+          "position": 4,
+          "title": "Attach a care plan to every proposal",
+          "detail": "Hosting, updates, backups, and small edits. Most clients accept it by default."
+        },
+        {
+          "position": 5,
+          "title": "Productise a fixed-price starter",
+          "detail": "One tier, one timeline, one price — it closes far faster than custom quotes."
+        }
+      ],
+      "reviewed_at": "2026-08-02"
+    },
+    {
+      "slug": "podcast-producer",
+      "name": "Podcast Producer",
+      "tagline": "Edit, package, and distribute for people who only want to talk",
+      "icon": "mic",
+      "category_slug": "creative",
+      "startup_cost_min": 100,
+      "startup_cost_max": 500,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 1000,
+      "monthly_profit_max": 8000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 15,
+      "flexibility": "anywhere",
+      "summary": "Founders, coaches, and agencies start podcasts and abandon them at episode six, because editing is the part nobody enjoys. A producer takes the raw file and returns a finished episode, show notes, and a handful of clips. Retainers run $800-$2,500 per show, and one client typically means four episodes a month.",
+      "factor_demand": 78,
+      "factor_profit_potential": 78,
+      "factor_startup_cost": 92,
+      "factor_time_to_revenue": 84,
+      "factor_scalability": 76,
+      "factor_competition": 70,
+      "skills": [
+        "Audio editing",
+        "Short-form video",
+        "Copywriting"
+      ],
+      "pros": [
+        "Retainer work with a predictable weekly rhythm",
+        "Clip repurposing lets you upsell without new client acquisition",
+        "Software has made the technical bar much lower than clients assume"
+      ],
+      "cons": [
+        "Shows get cancelled — churn is real and unpredictable",
+        "Turnaround expectations compress your schedule",
+        "Rate pressure from cheap overseas editing services"
+      ],
+      "tools": [
+        "Descript",
+        "Riverside",
+        "Opus Clip",
+        "Buzzsprout"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Master one editing workflow",
+          "detail": "Descript or Premiere end-to-end. Speed comes from repetition, not from tools."
+        },
+        {
+          "position": 2,
+          "title": "Offer a free first episode",
+          "detail": "The finished episode is the pitch; nobody buys audio editing from a description."
+        },
+        {
+          "position": 3,
+          "title": "Bundle clips and show notes",
+          "detail": "This is what moves you from $500 to $1,500 a month per client."
+        },
+        {
+          "position": 4,
+          "title": "Cap revisions in the agreement",
+          "detail": "Two rounds. Unlimited revisions is how producers end up working for minimum wage."
+        },
+        {
+          "position": 5,
+          "title": "Hire an assistant editor at four clients",
+          "detail": "You review and deliver; they do first-pass cuts."
+        }
+      ],
+      "reviewed_at": "2026-07-22"
+    },
+    {
+      "slug": "personal-trainer",
+      "name": "Personal Trainer",
+      "tagline": "Certification, a handful of clients, and a strong local reputation",
+      "icon": "dumbbell",
+      "category_slug": "service",
+      "startup_cost_min": 1000,
+      "startup_cost_max": 5000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 3000,
+      "monthly_profit_max": 12000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "local",
+      "summary": "Sessions run $60-$120 an hour, and a trainer with fifteen regular clients is running a solid full-time business. Certification and insurance are the entry cost. The ceiling comes from hours in a day — which is why the trainers who earn most run small groups or a hybrid online programme alongside one-to-one work.",
+      "factor_demand": 84,
+      "factor_profit_potential": 80,
+      "factor_startup_cost": 66,
+      "factor_time_to_revenue": 78,
+      "factor_scalability": 70,
+      "factor_competition": 62,
+      "skills": [
+        "Coaching",
+        "Programme design",
+        "Client retention"
+      ],
+      "pros": [
+        "Strong hourly rate from the very first client",
+        "Clients stay for years when results are real",
+        "Small-group and online tiers break the hourly ceiling"
+      ],
+      "cons": [
+        "Early mornings and evenings are when clients want you",
+        "Income stops the moment you do — no passive component by default",
+        "Certification, insurance, and gym rent before any revenue"
+      ],
+      "tools": [
+        "Trainerize",
+        "MyFitnessPal",
+        "Square",
+        "Instagram"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Get an accredited certification",
+          "detail": "NASM, ACE, or ISSA. Roughly $700-$2,000 including the exam."
+        },
+        {
+          "position": 2,
+          "title": "Secure liability insurance",
+          "detail": "Non-negotiable, and required before any gym will rent you floor space."
+        },
+        {
+          "position": 3,
+          "title": "Train your first five for free",
+          "detail": "In exchange for testimonials and before/after photos. It builds the proof you need."
+        },
+        {
+          "position": 4,
+          "title": "Sell packages, not sessions",
+          "detail": "Ten-session blocks improve cash flow and roughly double client adherence."
+        },
+        {
+          "position": 5,
+          "title": "Add a small-group tier",
+          "detail": "Four clients at $35 beats one at $90 for the same hour of your time."
+        }
+      ],
+      "reviewed_at": "2026-08-08"
+    },
+    {
+      "slug": "print-on-demand",
+      "name": "Print on Demand",
+      "tagline": "Design once; a partner prints, packs, and ships each order",
+      "icon": "shirt",
+      "category_slug": "ecommerce",
+      "startup_cost_min": 20,
+      "startup_cost_max": 100,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 300,
+      "monthly_profit_max": 3000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 10,
+      "flexibility": "anywhere",
+      "summary": "You upload designs; a fulfilment partner prints on demand and ships direct. There is no inventory and effectively no downside risk, which is exactly why the market is saturated and margins are thin. It works as a low-stakes way to test whether you can sell anything at all, and as a bolt-on for creators who already have an audience.",
+      "factor_demand": 74,
+      "factor_profit_potential": 58,
+      "factor_startup_cost": 99,
+      "factor_time_to_revenue": 86,
+      "factor_scalability": 88,
+      "factor_competition": 44,
+      "skills": [
+        "Graphic design",
+        "Keyword research",
+        "Trend spotting"
+      ],
+      "pros": [
+        "Lowest startup cost of anything in the index",
+        "No inventory risk whatsoever",
+        "Pairs naturally with an existing audience"
+      ],
+      "cons": [
+        "Base costs leave $4-$8 of margin per shirt",
+        "Extremely crowded — most stores never make a sale",
+        "You control neither print quality nor shipping times"
+      ],
+      "tools": [
+        "Printful",
+        "Etsy",
+        "Canva",
+        "Everbee"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Target a niche identity, not a broad joke",
+          "detail": "\"Retired air-traffic controller\" outsells \"funny cat shirt\" every time."
+        },
+        {
+          "position": 2,
+          "title": "Design for the platform's search",
+          "detail": "On Amazon Merch and Etsy, keyword research matters more than aesthetics."
+        },
+        {
+          "position": 3,
+          "title": "Order samples of your best sellers",
+          "detail": "You cannot support a product whose quality you have never seen."
+        },
+        {
+          "position": 4,
+          "title": "Publish in volume",
+          "detail": "A handful of designs is not a test. Fifty is."
+        },
+        {
+          "position": 5,
+          "title": "Move winners onto better margins",
+          "detail": "Once a design sells consistently, bulk printing doubles the profit per unit."
+        }
+      ],
+      "reviewed_at": "2026-07-18"
+    },
+    {
+      "slug": "freelance-writing",
+      "name": "Freelance Writing",
+      "tagline": "Words businesses need and do not have time to produce",
+      "icon": "pencil",
+      "category_slug": "creative",
+      "startup_cost_min": 0,
+      "startup_cost_max": 50,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 800,
+      "monthly_profit_max": 6000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 15,
+      "flexibility": "anywhere",
+      "summary": "Blog posts, case studies, email sequences, and white papers still get commissioned — but the bottom of the market has been hollowed out by generative tools. What sells now is judgement, interviews, and subject-matter depth. Generalists competing on price are in trouble; a writer who genuinely understands SaaS security or commercial insurance is booked out.",
+      "factor_demand": 72,
+      "factor_profit_potential": 70,
+      "factor_startup_cost": 99,
+      "factor_time_to_revenue": 90,
+      "factor_scalability": 60,
+      "factor_competition": 46,
+      "skills": [
+        "Writing",
+        "Interviewing",
+        "Subject-matter depth"
+      ],
+      "pros": [
+        "Zero startup cost and an immediate start",
+        "Specialists command $0.50-$2.00 a word",
+        "Portfolio compounds; good clips keep earning you work"
+      ],
+      "cons": [
+        "The commodity end of the market has collapsed",
+        "Income is strictly per-project unless you retain clients",
+        "Chasing invoices is a permanent part of the job"
+      ],
+      "tools": [
+        "Google Docs",
+        "Grammarly",
+        "Ahrefs",
+        "Notion"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Choose a lucrative vertical",
+          "detail": "Fintech, healthcare, B2B SaaS, and legal pay multiples of lifestyle content."
+        },
+        {
+          "position": 2,
+          "title": "Publish three strong clips",
+          "detail": "Self-published is fine. Editors care about the writing, not the masthead."
+        },
+        {
+          "position": 3,
+          "title": "Pitch companies, not job boards",
+          "detail": "Boards are a race to the bottom; a direct pitch to a marketing lead is not."
+        },
+        {
+          "position": 4,
+          "title": "Price per project, never per hour",
+          "detail": "Getting faster should not cut your pay."
+        },
+        {
+          "position": 5,
+          "title": "Convert clients to monthly retainers",
+          "detail": "Four posts a month, invoiced on the first. It ends the feast-or-famine cycle."
+        }
+      ],
+      "reviewed_at": "2026-07-25"
+    },
+    {
+      "slug": "virtual-assistant",
+      "name": "Virtual Assistant",
+      "tagline": "Take the admin off a busy operator's plate, remotely",
+      "icon": "users",
+      "category_slug": "service",
+      "startup_cost_min": 0,
+      "startup_cost_max": 100,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 800,
+      "monthly_profit_max": 4000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 20,
+      "flexibility": "remote",
+      "summary": "Inbox triage, scheduling, data entry, invoicing, travel, light bookkeeping — the work every small operator resents. US-based VAs bill $20-$50 an hour, and the ones who earn at the top of that range have specialised into something specific: podcast admin, real-estate transaction coordination, e-commerce customer service.",
+      "factor_demand": 80,
+      "factor_profit_potential": 60,
+      "factor_startup_cost": 99,
+      "factor_time_to_revenue": 94,
+      "factor_scalability": 62,
+      "factor_competition": 44,
+      "skills": [
+        "Organisation",
+        "Written communication",
+        "Tool fluency"
+      ],
+      "pros": [
+        "Start today with no money and no equipment",
+        "Clients rarely leave once you know their systems",
+        "A direct window into how many small businesses actually run"
+      ],
+      "cons": [
+        "Heavy price pressure from offshore providers",
+        "Hourly by nature — scaling means becoming an agency",
+        "Scope drifts constantly unless you defend it"
+      ],
+      "tools": [
+        "Notion",
+        "Slack",
+        "Calendly",
+        "QuickBooks"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Specialise immediately",
+          "detail": "\"VA for real-estate agents\" is a business; \"virtual assistant\" is a commodity."
+        },
+        {
+          "position": 2,
+          "title": "Learn the niche's stack",
+          "detail": "Knowing the exact CRM your clients use is worth $15 an hour by itself."
+        },
+        {
+          "position": 3,
+          "title": "Sell retainer blocks",
+          "detail": "20 hours a month, invoiced up front. It beats hourly billing on both sides."
+        },
+        {
+          "position": 4,
+          "title": "Document every process",
+          "detail": "Your SOP library is what lets you hand work to a subcontractor later."
+        },
+        {
+          "position": 5,
+          "title": "Subcontract the routine work",
+          "detail": "Keep the client relationship; delegate the data entry."
+        }
+      ],
+      "reviewed_at": "2026-07-30"
+    },
+    {
+      "slug": "affiliate-marketing",
+      "name": "Affiliate Marketing",
+      "tagline": "Earn commission sending qualified buyers to products you trust",
+      "icon": "link",
+      "category_slug": "online",
+      "startup_cost_min": 10,
+      "startup_cost_max": 100,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 200,
+      "monthly_profit_max": 8000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 15,
+      "flexibility": "anywhere",
+      "summary": "You build an audience or a content asset, recommend products, and take a cut of what converts. The economics are excellent and the timeline is brutal: most sites see meaningful revenue somewhere between month nine and month eighteen. Search-algorithm volatility has made single-channel affiliate businesses considerably riskier than they were five years ago.",
+      "factor_demand": 70,
+      "factor_profit_potential": 74,
+      "factor_startup_cost": 96,
+      "factor_time_to_revenue": 34,
+      "factor_scalability": 92,
+      "factor_competition": 40,
+      "skills": [
+        "SEO or short-form video",
+        "Content production",
+        "Analytics"
+      ],
+      "pros": [
+        "No product, inventory, support, or fulfilment",
+        "Income continues from content published years ago",
+        "Scales without adding hours once ranking"
+      ],
+      "cons": [
+        "Long runway before the first meaningful cheque",
+        "One algorithm update can halve revenue overnight",
+        "Programmes change commission rates without warning"
+      ],
+      "tools": [
+        "WordPress",
+        "Ahrefs",
+        "ConvertKit",
+        "Impact"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Pick a niche with real purchase intent",
+          "detail": "People must be searching to buy, not just to read."
+        },
+        {
+          "position": 2,
+          "title": "Choose the channel you will actually sustain",
+          "detail": "SEO site, YouTube, or a newsletter. One, done properly, for a year."
+        },
+        {
+          "position": 3,
+          "title": "Buy and test what you recommend",
+          "detail": "First-hand testing is the only durable edge left in affiliate content."
+        },
+        {
+          "position": 4,
+          "title": "Get into higher-paying programmes",
+          "detail": "Software and financial products pay 20-40%; general retail pays 3%."
+        },
+        {
+          "position": 5,
+          "title": "Capture emails from day one",
+          "detail": "It is the only channel no platform can take away from you."
+        }
+      ],
+      "reviewed_at": "2026-08-01"
+    },
+    {
+      "slug": "youtube-channel",
+      "name": "YouTube Channel",
+      "tagline": "Build an audience that ad revenue, sponsors, and products all pay for",
+      "icon": "play",
+      "category_slug": "creative",
+      "startup_cost_min": 50,
+      "startup_cost_max": 200,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 200,
+      "monthly_profit_max": 15000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 20,
+      "flexibility": "anywhere",
+      "summary": "The highest ceiling and one of the longest runways in the index. Ad revenue alone is modest — $3-$20 per thousand views depending on niche — but a channel with 20,000 engaged subscribers supports sponsorships, an email list, and product sales. Roughly nine in ten channels are abandoned before the algorithm has enough data to distribute them.",
+      "factor_demand": 76,
+      "factor_profit_potential": 82,
+      "factor_startup_cost": 94,
+      "factor_time_to_revenue": 30,
+      "factor_scalability": 96,
+      "factor_competition": 42,
+      "skills": [
+        "On-camera or narration",
+        "Video editing",
+        "Packaging and thumbnails"
+      ],
+      "pros": [
+        "Compounding: the back catalogue keeps earning indefinitely",
+        "Multiple revenue lines from one audience",
+        "Sponsorships pay far more than platform ad revenue"
+      ],
+      "cons": [
+        "Twelve to eighteen months of work before meaningful income is normal",
+        "Production time per video is consistently underestimated",
+        "Being the face of the channel is hard to delegate later"
+      ],
+      "tools": [
+        "DaVinci Resolve",
+        "TubeBuddy",
+        "Canva",
+        "Epidemic Sound"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Choose a niche with commercial sponsors",
+          "detail": "Finance, software, and home improvement pay many times what entertainment does."
+        },
+        {
+          "position": 2,
+          "title": "Study packaging before production",
+          "detail": "Title and thumbnail decide whether the video is ever seen. Design them first."
+        },
+        {
+          "position": 3,
+          "title": "Publish weekly for six months",
+          "detail": "Consistency is the input the algorithm actually rewards."
+        },
+        {
+          "position": 4,
+          "title": "Review retention on every video",
+          "detail": "The first thirty seconds explain most of your performance."
+        },
+        {
+          "position": 5,
+          "title": "Diversify the moment you monetise",
+          "detail": "Ad revenue is the floor, not the plan. Sponsors and products are the business."
+        }
+      ],
+      "reviewed_at": "2026-08-06"
+    },
+    {
+      "slug": "bookkeeping-service",
+      "name": "Bookkeeping Service",
+      "tagline": "Monthly closes for small businesses that dread their own books",
+      "icon": "chart",
+      "category_slug": "service",
+      "startup_cost_min": 300,
+      "startup_cost_max": 2000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2000,
+      "monthly_profit_max": 9000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "remote",
+      "summary": "Every small business needs its books closed monthly, and almost none of them want to do it. Retainers run $300-$1,500 per client per month and clients stay for years — switching bookkeepers is genuinely painful. It is one of the quietest, stickiest service businesses available, and demand exceeds supply in most markets.",
+      "factor_demand": 86,
+      "factor_profit_potential": 82,
+      "factor_startup_cost": 84,
+      "factor_time_to_revenue": 74,
+      "factor_scalability": 76,
+      "factor_competition": 76,
+      "skills": [
+        "Accounting basics",
+        "Attention to detail",
+        "Client management"
+      ],
+      "pros": [
+        "Exceptionally low churn — multi-year client relationships are normal",
+        "Recurring revenue from month one",
+        "Underserved: many bookkeepers have waiting lists"
+      ],
+      "cons": [
+        "January to April is relentless",
+        "Errors carry real financial consequences for clients",
+        "Certification and software costs come before revenue"
+      ],
+      "tools": [
+        "QuickBooks Online",
+        "Xero",
+        "Dext",
+        "Karbon"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Get QuickBooks or Xero certified",
+          "detail": "Free through the vendors and it is the credential clients actually recognise."
+        },
+        {
+          "position": 2,
+          "title": "Specialise by industry",
+          "detail": "Restaurants, trades, and e-commerce each have distinct books. Depth wins referrals."
+        },
+        {
+          "position": 3,
+          "title": "Price by transaction volume",
+          "detail": "Not by hours — it protects your margin as you get faster."
+        },
+        {
+          "position": 4,
+          "title": "Standardise the monthly close",
+          "detail": "A fixed checklist and calendar is what makes the practice scalable."
+        },
+        {
+          "position": 5,
+          "title": "Partner with a CPA firm",
+          "detail": "They want the compliance work, not the bookkeeping. Referrals flow both ways."
+        }
+      ],
+      "reviewed_at": "2026-08-12"
+    },
+    {
+      "slug": "lawn-care",
+      "name": "Lawn Care & Landscaping",
+      "tagline": "Weekly routes that pay for themselves inside a season",
+      "icon": "leaf",
+      "category_slug": "local",
+      "startup_cost_min": 2000,
+      "startup_cost_max": 15000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2500,
+      "monthly_profit_max": 12000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 15,
+      "hours_per_week_max": 40,
+      "flexibility": "local",
+      "summary": "A route of forty weekly lawns at $45 each is roughly $7,200 a month in season. Density is everything: tightly clustered clients cut drive time and double effective hourly rate. In most of the country the business is seasonal, so the operators who do well either add snow removal and leaf clean-up or bank aggressively through summer.",
+      "factor_demand": 84,
+      "factor_profit_potential": 80,
+      "factor_startup_cost": 54,
+      "factor_time_to_revenue": 88,
+      "factor_scalability": 74,
+      "factor_competition": 60,
+      "skills": [
+        "Equipment maintenance",
+        "Route planning",
+        "Local sales"
+      ],
+      "pros": [
+        "Recurring weekly revenue with very high retention",
+        "Equipment is a real, resellable asset",
+        "Route density compounds your margin as you grow"
+      ],
+      "cons": [
+        "Seasonal in most climates",
+        "Meaningful equipment investment up front",
+        "Weather sets your schedule, not you"
+      ],
+      "tools": [
+        "Jobber",
+        "Google Local Services",
+        "Yardbook",
+        "Square"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Buy quality used equipment",
+          "detail": "A commercial mower at half price beats a new residential one that dies in July."
+        },
+        {
+          "position": 2,
+          "title": "Farm one neighbourhood at a time",
+          "detail": "Twenty lawns on three streets beats forty spread across a county."
+        },
+        {
+          "position": 3,
+          "title": "Sell the season, not the cut",
+          "detail": "Contracted monthly billing March-October smooths cash flow."
+        },
+        {
+          "position": 4,
+          "title": "Upsell mulch, aeration, and clean-ups",
+          "detail": "One-off jobs at high margin between the weekly route."
+        },
+        {
+          "position": 5,
+          "title": "Add a winter service",
+          "detail": "Snow removal or holiday lighting keeps crew and cash flow through the off-season."
+        }
+      ],
+      "reviewed_at": "2026-08-09"
+    },
+    {
+      "slug": "mobile-car-detailing",
+      "name": "Mobile Car Detailing",
+      "tagline": "Drive to the customer; charge premium for the convenience",
+      "icon": "sparkle",
+      "category_slug": "local",
+      "startup_cost_min": 1500,
+      "startup_cost_max": 8000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2000,
+      "monthly_profit_max": 9000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 15,
+      "hours_per_week_max": 35,
+      "flexibility": "local",
+      "summary": "Full details run $150-$350 and take three to five hours, with consumables costing under $20 a car. Going mobile removes the rent line entirely and is what customers pay the premium for. Growth comes from fleet and dealership contracts, which trade the higher per-car price for guaranteed weekly volume.",
+      "factor_demand": 78,
+      "factor_profit_potential": 76,
+      "factor_startup_cost": 62,
+      "factor_time_to_revenue": 86,
+      "factor_scalability": 66,
+      "factor_competition": 64,
+      "skills": [
+        "Detailing technique",
+        "Customer service",
+        "Scheduling"
+      ],
+      "pros": [
+        "Very high margin per job — consumables are a rounding error",
+        "No premises, no rent, no lease",
+        "Fleet and dealer contracts provide a stable base"
+      ],
+      "cons": [
+        "Physically hard work in whatever weather arrives",
+        "Water and power access varies by site",
+        "Capped by how many cars fit in a day"
+      ],
+      "tools": [
+        "Square Appointments",
+        "Instagram",
+        "Google Business Profile",
+        "Urable"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Kit out a van or trailer",
+          "detail": "Water tank, generator, pressure washer, extractor. Around $3,000-$6,000 done properly."
+        },
+        {
+          "position": 2,
+          "title": "Learn paint correction",
+          "detail": "It is the difference between a $120 wash and a $400 detail."
+        },
+        {
+          "position": 3,
+          "title": "Photograph every single job",
+          "detail": "Before/after shots are the entire marketing strategy in this trade."
+        },
+        {
+          "position": 4,
+          "title": "Sell maintenance plans",
+          "detail": "Monthly upkeep details at a lower price point, booked in advance."
+        },
+        {
+          "position": 5,
+          "title": "Chase fleet contracts",
+          "detail": "Dealerships, rental branches, and company fleets fill weekdays reliably."
+        }
+      ],
+      "reviewed_at": "2026-07-27"
+    },
+    {
+      "slug": "newsletter-publisher",
+      "name": "Newsletter Publisher",
+      "tagline": "An owned audience that sponsors will pay to reach",
+      "icon": "mail",
+      "category_slug": "online",
+      "startup_cost_min": 0,
+      "startup_cost_max": 300,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 200,
+      "monthly_profit_max": 12000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 15,
+      "flexibility": "anywhere",
+      "summary": "A niche newsletter with 5,000 engaged subscribers can command $300-$800 per sponsored slot, and unlike social platforms, nobody can throttle your distribution. It is one of the few genuinely ownable audience assets. Growth is the hard part — organic list building is slow, and paid acquisition only works if your monetisation is already proven.",
+      "factor_demand": 74,
+      "factor_profit_potential": 80,
+      "factor_startup_cost": 96,
+      "factor_time_to_revenue": 40,
+      "factor_scalability": 90,
+      "factor_competition": 52,
+      "skills": [
+        "Writing",
+        "Curation",
+        "Audience growth"
+      ],
+      "pros": [
+        "You own the distribution outright",
+        "Sponsorship rates hold up even at modest list sizes",
+        "Very low ongoing cost; margins are near total"
+      ],
+      "cons": [
+        "Growth from a standing start is genuinely slow",
+        "A weekly send is a weekly obligation, indefinitely",
+        "Deliverability and inbox placement are constant maintenance"
+      ],
+      "tools": [
+        "beehiiv",
+        "Substack",
+        "SparkLoop",
+        "Twitter/X"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Pick a niche advertisers want",
+          "detail": "B2B and finance sponsors pay far more per subscriber than general interest."
+        },
+        {
+          "position": 2,
+          "title": "Commit to a fixed cadence",
+          "detail": "Weekly, same day. Irregular sends kill open rates faster than bad writing."
+        },
+        {
+          "position": 3,
+          "title": "Grow through cross-promotion",
+          "detail": "Swaps with adjacent newsletters are the cheapest quality growth available."
+        },
+        {
+          "position": 4,
+          "title": "Publish a rate card at 2,000 subscribers",
+          "detail": "Sponsors will not ask; you have to make the offer visible."
+        },
+        {
+          "position": 5,
+          "title": "Add a paid tier once free is working",
+          "detail": "Premium issues or a community, priced at $8-$20 a month."
+        }
+      ],
+      "reviewed_at": "2026-08-03"
+    },
+    {
+      "slug": "airbnb-co-hosting",
+      "name": "Airbnb Co-Hosting",
+      "tagline": "Run other people's short-term rentals for a share of revenue",
+      "icon": "key",
+      "category_slug": "service",
+      "startup_cost_min": 200,
+      "startup_cost_max": 2000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 1000,
+      "monthly_profit_max": 8000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "local",
+      "summary": "You handle listings, pricing, guest communication, and cleaning coordination; the owner keeps the property and pays you 15-25% of booking revenue. No mortgage, no down payment, no exposure to the asset. Ten properties at $400 a month each is a real business, and the model works precisely because most owners badly underestimate the operational load.",
+      "factor_demand": 76,
+      "factor_profit_potential": 78,
+      "factor_startup_cost": 88,
+      "factor_time_to_revenue": 80,
+      "factor_scalability": 72,
+      "factor_competition": 68,
+      "skills": [
+        "Hospitality",
+        "Revenue management",
+        "Vendor coordination"
+      ],
+      "pros": [
+        "Access short-term rental income without owning property",
+        "Revenue share scales with the market, not a fixed fee",
+        "Systems and cleaner networks carry across every new property"
+      ],
+      "cons": [
+        "Guest issues arrive at 2am and are yours to solve",
+        "Regulation on short-term rentals keeps tightening in many cities",
+        "Losing one owner can be a large share of revenue"
+      ],
+      "tools": [
+        "Hospitable",
+        "PriceLabs",
+        "Turno",
+        "Airbnb"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Learn one market deeply",
+          "detail": "Occupancy patterns, seasonality, and local rules for a single city."
+        },
+        {
+          "position": 2,
+          "title": "Co-host one property brilliantly",
+          "detail": "Your first owner's numbers are the case study that wins the next five."
+        },
+        {
+          "position": 3,
+          "title": "Build the cleaner and handyman bench",
+          "detail": "Reliable turnovers are the operational core of the whole service."
+        },
+        {
+          "position": 4,
+          "title": "Use dynamic pricing",
+          "detail": "Automated pricing typically lifts revenue 10-25% over fixed nightly rates."
+        },
+        {
+          "position": 5,
+          "title": "Contract on revenue share",
+          "detail": "20% of gross aligns you with the owner far better than a flat fee."
+        }
+      ],
+      "reviewed_at": "2026-07-31"
+    },
+    {
+      "slug": "online-course-creator",
+      "name": "Online Course Creator",
+      "tagline": "Package what you know into something that sells while you sleep",
+      "icon": "book",
+      "category_slug": "online",
+      "startup_cost_min": 200,
+      "startup_cost_max": 2000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 500,
+      "monthly_profit_max": 20000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 20,
+      "flexibility": "anywhere",
+      "summary": "A $300 course sold 40 times a month is $12,000 in revenue with essentially no marginal cost. The catch is that courses do not sell themselves — you need an audience or a paid funnel that works, and the failure mode is spending three months building a course for an audience that does not exist. Sell it first, build it second.",
+      "factor_demand": 72,
+      "factor_profit_potential": 88,
+      "factor_startup_cost": 80,
+      "factor_time_to_revenue": 52,
+      "factor_scalability": 94,
+      "factor_competition": 54,
+      "skills": [
+        "Teaching",
+        "Video production",
+        "Launch marketing"
+      ],
+      "pros": [
+        "Very high margin and fully scalable",
+        "Establishes authority that feeds consulting and speaking",
+        "One good course can sell for years with light updates"
+      ],
+      "cons": [
+        "Requires an audience or a working ad funnel first",
+        "Content ages and needs periodic re-recording",
+        "Refund rates run 5-15% on cold traffic"
+      ],
+      "tools": [
+        "Teachable",
+        "Kajabi",
+        "Loom",
+        "Circle"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Pre-sell before you build",
+          "detail": "Take deposits on an outline. No takers means no course — you just saved three months."
+        },
+        {
+          "position": 2,
+          "title": "Teach one specific transformation",
+          "detail": "\"Land your first three bookkeeping clients\" beats \"learn bookkeeping\"."
+        },
+        {
+          "position": 3,
+          "title": "Keep production lean",
+          "detail": "Screen recording and a decent microphone. Nobody refunds over lighting."
+        },
+        {
+          "position": 4,
+          "title": "Price for outcome, not length",
+          "detail": "A four-hour course that gets someone hired is worth more than forty hours of theory."
+        },
+        {
+          "position": 5,
+          "title": "Run live cohorts first",
+          "detail": "Higher price, faster feedback, and the recordings become the evergreen version."
+        }
+      ],
+      "reviewed_at": "2026-08-05"
+    },
+    {
+      "slug": "pressure-washing",
+      "name": "Pressure Washing",
+      "tagline": "Visible results, immediate payment, low barrier to entry",
+      "icon": "droplet",
+      "category_slug": "local",
+      "startup_cost_min": 1000,
+      "startup_cost_max": 6000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2000,
+      "monthly_profit_max": 8000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 15,
+      "hours_per_week_max": 30,
+      "flexibility": "local",
+      "summary": "Driveways, siding, and decks at $200-$600 a job, most completed in two to four hours. The before/after contrast is so dramatic that the marketing largely does itself on local social feeds. Commercial work — storefronts, parking structures, restaurant pads — is where the recurring contracts and the better rates live.",
+      "factor_demand": 76,
+      "factor_profit_potential": 74,
+      "factor_startup_cost": 70,
+      "factor_time_to_revenue": 90,
+      "factor_scalability": 64,
+      "factor_competition": 62,
+      "skills": [
+        "Equipment operation",
+        "Surface knowledge",
+        "Local marketing"
+      ],
+      "pros": [
+        "Fast jobs and same-day payment",
+        "Results photograph extremely well, which drives referrals",
+        "Commercial contracts turn one-off work into recurring revenue"
+      ],
+      "cons": [
+        "Damaging a surface is an expensive, avoidable mistake",
+        "Weather-dependent and seasonal in cold climates",
+        "Low barrier means constant new local competitors"
+      ],
+      "tools": [
+        "Jobber",
+        "Facebook Groups",
+        "Google Business Profile",
+        "Square"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Buy commercial-grade gear",
+          "detail": "4 GPM minimum with a surface cleaner. Consumer units cannot do this work."
+        },
+        {
+          "position": 2,
+          "title": "Learn soft washing",
+          "detail": "Roofs and siding need chemistry, not pressure. Getting this wrong is costly."
+        },
+        {
+          "position": 3,
+          "title": "Get insured before job one",
+          "detail": "General liability is cheap and protects you from a five-figure mistake."
+        },
+        {
+          "position": 4,
+          "title": "Post every before/after locally",
+          "detail": "Neighbourhood groups convert better than any paid channel for this trade."
+        },
+        {
+          "position": 5,
+          "title": "Sell annual commercial contracts",
+          "detail": "Quarterly storefront cleaning is predictable, scheduled revenue."
+        }
+      ],
+      "reviewed_at": "2026-07-24"
+    },
+    {
+      "slug": "amazon-fba",
+      "name": "Amazon FBA Seller",
+      "tagline": "Private-label products carried by the largest storefront in the world",
+      "icon": "box",
+      "category_slug": "ecommerce",
+      "startup_cost_min": 3000,
+      "startup_cost_max": 20000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 1000,
+      "monthly_profit_max": 25000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "anywhere",
+      "summary": "You source or private-label a product, ship it into Amazon's warehouses, and they handle storage, delivery, and returns. Access to that much buying intent is the draw; the cost is real capital up front, roughly 15% in referral fees plus fulfilment, and a platform that can suspend your account with limited recourse. It is the most capital-intensive entry in the index.",
+      "factor_demand": 82,
+      "factor_profit_potential": 88,
+      "factor_startup_cost": 34,
+      "factor_time_to_revenue": 46,
+      "factor_scalability": 92,
+      "factor_competition": 48,
+      "skills": [
+        "Product research",
+        "Supplier negotiation",
+        "PPC advertising"
+      ],
+      "pros": [
+        "Enormous built-in demand — no traffic to build",
+        "Fulfilment, support, and returns are handled for you",
+        "Established FBA brands sell for 3-5x annual profit"
+      ],
+      "cons": [
+        "$5,000+ realistically needed for a first viable product",
+        "Account suspensions can freeze the business overnight",
+        "Fees and ad costs have compressed margins every year"
+      ],
+      "tools": [
+        "Helium 10",
+        "Jungle Scout",
+        "Alibaba",
+        "Amazon Seller Central"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Research with real data",
+          "detail": "Target sub-$50 price points, consistent demand, and fewer than 500 reviews on page one."
+        },
+        {
+          "position": 2,
+          "title": "Verify suppliers properly",
+          "detail": "Order samples from at least three. The cheapest quote is rarely the cheapest outcome."
+        },
+        {
+          "position": 3,
+          "title": "Model the full cost stack",
+          "detail": "Landed cost, referral fee, FBA fee, storage, returns, and PPC. Target 25%+ net."
+        },
+        {
+          "position": 4,
+          "title": "Start with 300-500 units",
+          "detail": "Enough to test demand without a five-figure bet on an untested listing."
+        },
+        {
+          "position": 5,
+          "title": "Fund the launch with PPC",
+          "detail": "Expect to run at a loss for 60-90 days while the listing gains rank and reviews."
+        }
+      ],
+      "reviewed_at": "2026-08-10"
+    },
+    {
+      "slug": "seo-consultant",
+      "name": "SEO Consultant",
+      "tagline": "Own the channel every business wants and few understand",
+      "icon": "search",
+      "category_slug": "service",
+      "startup_cost_min": 100,
+      "startup_cost_max": 1500,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 2000,
+      "monthly_profit_max": 15000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "remote",
+      "summary": "Retainers run $1,500-$8,000 a month and clients stay as long as rankings hold. AI-generated search results have unsettled the field, which has raised — not lowered — the value of consultants who can show real business outcomes rather than ranking screenshots. Local SEO for service businesses is the most reliable entry point.",
+      "factor_demand": 78,
+      "factor_profit_potential": 88,
+      "factor_startup_cost": 88,
+      "factor_time_to_revenue": 64,
+      "factor_scalability": 80,
+      "factor_competition": 58,
+      "skills": [
+        "Technical SEO",
+        "Content strategy",
+        "Analytics"
+      ],
+      "pros": [
+        "High-value retainers from a small client roster",
+        "Results are measurable, which makes renewal conversations easy",
+        "Local SEO is a lower-competition way in"
+      ],
+      "cons": [
+        "You are accountable for outcomes an algorithm controls",
+        "Results take months — early client anxiety is constant",
+        "The field shifts under you; continuous learning is mandatory"
+      ],
+      "tools": [
+        "Ahrefs",
+        "Screaming Frog",
+        "Google Search Console",
+        "Looker Studio"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Start with local SEO",
+          "detail": "Google Business Profile and local citations produce visible wins in weeks, not months."
+        },
+        {
+          "position": 2,
+          "title": "Rank something of your own",
+          "detail": "A site you own is the case study that closes clients."
+        },
+        {
+          "position": 3,
+          "title": "Lead with a paid audit",
+          "detail": "A $500-$1,500 audit is a low-risk entry that converts into retainers."
+        },
+        {
+          "position": 4,
+          "title": "Report on revenue, not rankings",
+          "detail": "Calls, forms, and booked jobs. Position 3 means nothing to an owner."
+        },
+        {
+          "position": 5,
+          "title": "Subcontract content and links",
+          "detail": "Keep strategy and the client relationship; delegate the production."
+        }
+      ],
+      "reviewed_at": "2026-08-07"
+    },
+    {
+      "slug": "handyman-service",
+      "name": "Handyman Service",
+      "tagline": "The small repairs licensed trades will not take",
+      "icon": "wrench",
+      "category_slug": "local",
+      "startup_cost_min": 500,
+      "startup_cost_max": 5000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 3000,
+      "monthly_profit_max": 11000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 20,
+      "hours_per_week_max": 40,
+      "flexibility": "local",
+      "summary": "Mounting, drywall patches, fixture swaps, door adjustments — jobs too small for a licensed contractor and beyond most homeowners. Rates run $75-$125 an hour and demand outstrips supply almost everywhere, largely because the skilled trades workforce is retiring faster than it is being replaced. The main constraint is that you have to be there.",
+      "factor_demand": 92,
+      "factor_profit_potential": 80,
+      "factor_startup_cost": 76,
+      "factor_time_to_revenue": 92,
+      "factor_scalability": 62,
+      "factor_competition": 80,
+      "skills": [
+        "General repair",
+        "Estimating",
+        "Customer trust"
+      ],
+      "pros": [
+        "Demand exceeds supply in nearly every market",
+        "Very low startup cost if you already own tools",
+        "Repeat customers and referrals fill the calendar quickly"
+      ],
+      "cons": [
+        "Licensing limits vary by state and job type",
+        "Strictly hours-for-dollars unless you hire",
+        "Physical work that gets harder over a career"
+      ],
+      "tools": [
+        "Jobber",
+        "Thumbtack",
+        "Google Local Services",
+        "Square"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Check your state's licence threshold",
+          "detail": "Most states cap unlicensed work at a per-job dollar amount. Know yours exactly."
+        },
+        {
+          "position": 2,
+          "title": "Get general liability cover",
+          "detail": "About $500-$1,000 a year and required by most property managers."
+        },
+        {
+          "position": 3,
+          "title": "Set a minimum call-out",
+          "detail": "A two-hour minimum stops the calendar filling with unprofitable ten-minute jobs."
+        },
+        {
+          "position": 4,
+          "title": "Cultivate property managers",
+          "detail": "One manager with thirty units is a steady, recurring work stream."
+        },
+        {
+          "position": 5,
+          "title": "Specialise upward",
+          "detail": "Bathroom refits and deck builds pay several times what small repairs do."
+        }
+      ],
+      "reviewed_at": "2026-08-13"
+    },
+    {
+      "slug": "pet-sitting",
+      "name": "Pet Sitting & Dog Walking",
+      "tagline": "Recurring bookings from a client base that rarely leaves",
+      "icon": "paw",
+      "category_slug": "service",
+      "startup_cost_min": 50,
+      "startup_cost_max": 500,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 800,
+      "monthly_profit_max": 4500,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 30,
+      "flexibility": "local",
+      "summary": "Walks run $20-$35 for half an hour; overnight sitting runs $50-$100 a night. Once an owner trusts you with keys and a nervous rescue dog, they effectively never switch. Growth means either boarding at your own home or building a bench of walkers you dispatch and take a cut from.",
+      "factor_demand": 80,
+      "factor_profit_potential": 58,
+      "factor_startup_cost": 96,
+      "factor_time_to_revenue": 92,
+      "factor_scalability": 60,
+      "factor_competition": 56,
+      "skills": [
+        "Animal handling",
+        "Reliability",
+        "Local networking"
+      ],
+      "pros": [
+        "Effectively no startup cost and immediate income",
+        "Exceptional client retention once trust is established",
+        "Holiday periods command large premiums"
+      ],
+      "cons": [
+        "Weekends and holidays are peak demand — that is when you work",
+        "Bites, escapes, and medical emergencies are real liabilities",
+        "Income capped by daylight hours and geography"
+      ],
+      "tools": [
+        "Rover",
+        "Time To Pet",
+        "Square",
+        "Nextdoor"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Get pet-sitting insurance",
+          "detail": "Around $200-$400 a year and it is what separates you from a neighbourhood teenager."
+        },
+        {
+          "position": 2,
+          "title": "Start on the marketplaces",
+          "detail": "Rover and Wag take a cut but solve the cold-start problem."
+        },
+        {
+          "position": 3,
+          "title": "Move regulars off-platform legitimately",
+          "detail": "Once permitted by terms, direct booking removes a 20% fee."
+        },
+        {
+          "position": 4,
+          "title": "Sell recurring weekly slots",
+          "detail": "Three walks a week, standing booking, invoiced monthly."
+        },
+        {
+          "position": 5,
+          "title": "Add boarding or a walker bench",
+          "detail": "Both break the ceiling that solo walking imposes."
+        }
+      ],
+      "reviewed_at": "2026-07-26"
+    },
+    {
+      "slug": "vending-machine-route",
+      "name": "Vending Machine Route",
+      "tagline": "Semi-passive revenue from machines placed in someone else's building",
+      "icon": "grid",
+      "category_slug": "local",
+      "startup_cost_min": 2000,
+      "startup_cost_max": 12000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 500,
+      "monthly_profit_max": 5000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 5,
+      "hours_per_week_max": 15,
+      "flexibility": "local",
+      "summary": "A well-placed machine clears $200-$600 a month on roughly two hours of restocking. Placement is the entire business — the same machine that earns $500 in a busy gym earns $40 in a quiet office. Growth is linear and capital-bound: each new location needs another machine bought and installed before it earns anything.",
+      "factor_demand": 62,
+      "factor_profit_potential": 62,
+      "factor_startup_cost": 52,
+      "factor_time_to_revenue": 66,
+      "factor_scalability": 78,
+      "factor_competition": 72,
+      "skills": [
+        "Location scouting",
+        "Negotiation",
+        "Inventory management"
+      ],
+      "pros": [
+        "Genuinely low ongoing time commitment per machine",
+        "Machines are tangible assets you can resell",
+        "Cash flows the day a machine is switched on"
+      ],
+      "cons": [
+        "Capital per unit of revenue is high",
+        "Bad placements are expensive to discover and relocate",
+        "Vandalism, breakdowns, and stale stock are ongoing costs"
+      ],
+      "tools": [
+        "Nayax",
+        "Cantaloupe",
+        "Sam's Club",
+        "VendSoft"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Secure the location before the machine",
+          "detail": "A signed placement agreement first. Buying machines speculatively is the classic error."
+        },
+        {
+          "position": 2,
+          "title": "Target captive audiences",
+          "detail": "Gyms, apartment lobbies, auto shops, and manufacturing floors outperform offices."
+        },
+        {
+          "position": 3,
+          "title": "Buy refurbished with card readers",
+          "detail": "Cashless payment lifts revenue 20-30% and is now expected."
+        },
+        {
+          "position": 4,
+          "title": "Offer the host a commission",
+          "detail": "5-15% of gross wins placements your competitors will not pay for."
+        },
+        {
+          "position": 5,
+          "title": "Track sales per slot",
+          "detail": "Cull the slow lines quarterly. Product mix is where the margin is won."
+        }
+      ],
+      "reviewed_at": "2026-07-20"
+    },
+    {
+      "slug": "etsy-handmade-shop",
+      "name": "Etsy Handmade Shop",
+      "tagline": "Sell what you make to a marketplace of ready buyers",
+      "icon": "scissors",
+      "category_slug": "creative",
+      "startup_cost_min": 100,
+      "startup_cost_max": 2000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 300,
+      "monthly_profit_max": 5000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 10,
+      "hours_per_week_max": 25,
+      "flexibility": "anywhere",
+      "summary": "Jewellery, ceramics, woodwork, personalised gifts — Etsy brings the buyers, and the platform's search rewards listings that convert. The constraint is that every sale consumes your hands and your time, so the shops that grow past a few thousand a month either raise prices sharply or move into semi-production.",
+      "factor_demand": 68,
+      "factor_profit_potential": 58,
+      "factor_startup_cost": 84,
+      "factor_time_to_revenue": 78,
+      "factor_scalability": 54,
+      "factor_competition": 46,
+      "skills": [
+        "A craft",
+        "Product photography",
+        "Marketplace SEO"
+      ],
+      "pros": [
+        "Buyers arrive with intent — no audience to build first",
+        "Personalisation commands a substantial premium",
+        "Start small with materials you already own"
+      ],
+      "cons": [
+        "Fees stack up to roughly 10-12% of each sale",
+        "Handmade does not scale — output is bounded by your hands",
+        "Highly seasonal, with Q4 dominating annual revenue"
+      ],
+      "tools": [
+        "Etsy",
+        "Everbee",
+        "Canva",
+        "Shipping Easy"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Photograph on white and in use",
+          "detail": "Photography drives conversion more than the product does on this platform."
+        },
+        {
+          "position": 2,
+          "title": "Write listings for Etsy search",
+          "detail": "All thirteen tags, keywords in the title, and a real description."
+        },
+        {
+          "position": 3,
+          "title": "Price at materials times four, minimum",
+          "detail": "Most new sellers underprice into an unpayable hourly rate."
+        },
+        {
+          "position": 4,
+          "title": "Offer personalisation",
+          "detail": "It lifts price, conversion, and defensibility all at once."
+        },
+        {
+          "position": 5,
+          "title": "Build stock before October",
+          "detail": "Q4 is most of the year's revenue. Going in unprepared wastes it."
+        }
+      ],
+      "reviewed_at": "2026-07-21"
+    },
+    {
+      "slug": "junk-removal",
+      "name": "Junk Removal",
+      "tagline": "A truck, some muscle, and jobs people want done today",
+      "icon": "truck",
+      "category_slug": "local",
+      "startup_cost_min": 3000,
+      "startup_cost_max": 20000,
+      "startup_cost_open_ended": false,
+      "monthly_profit_min": 3000,
+      "monthly_profit_max": 15000,
+      "monthly_profit_open_ended": true,
+      "hours_per_week_min": 20,
+      "hours_per_week_max": 40,
+      "flexibility": "local",
+      "summary": "Full-truck loads bill $400-$800 against $60-$150 in landfill fees, and most jobs are booked for the same or next day because the customer wants the problem gone now. Estate clean-outs, evictions, and property-manager relationships are the volume. The capital cost is a truck and a trailer, and salvage recovery quietly adds to the margin.",
+      "factor_demand": 80,
+      "factor_profit_potential": 84,
+      "factor_startup_cost": 46,
+      "factor_time_to_revenue": 84,
+      "factor_scalability": 76,
+      "factor_competition": 66,
+      "skills": [
+        "Physical stamina",
+        "Pricing on the spot",
+        "Disposal logistics"
+      ],
+      "pros": [
+        "Strong gross margin per job",
+        "Same-day urgency means little price shopping",
+        "Recyclables and resale recover part of every load"
+      ],
+      "cons": [
+        "Truck, trailer, and insurance are a real up-front cost",
+        "Heavy physical labour with genuine injury risk",
+        "Disposal fees and site rules vary constantly"
+      ],
+      "tools": [
+        "Jobber",
+        "Google Local Services",
+        "Facebook Marketplace",
+        "Square"
+      ],
+      "steps": [
+        {
+          "position": 1,
+          "title": "Secure a truck and dump trailer",
+          "detail": "Used is fine. This is the single largest line in your startup budget."
+        },
+        {
+          "position": 2,
+          "title": "Map your disposal options",
+          "detail": "Transfer stations, recyclers, and donation centres, with fees and hours known cold."
+        },
+        {
+          "position": 3,
+          "title": "Price by volume, not by hour",
+          "detail": "Quarter, half, and full truck. Quote on sight, in person."
+        },
+        {
+          "position": 4,
+          "title": "Court property managers and realtors",
+          "detail": "Turnovers and estate clean-outs are repeat, scheduled volume."
+        },
+        {
+          "position": 5,
+          "title": "Resell what still has value",
+          "detail": "Appliances, furniture, and scrap metal are found margin on jobs already paid for."
+        }
+      ],
+      "reviewed_at": "2026-08-15"
+    }
+  ]
+}
