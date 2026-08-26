@@ -1,11 +1,19 @@
-import { SCORE_FACTORS, type ScoreFactors } from "@/lib/types";
+import type { ScoringFactorKey } from "@/lib/contract";
+import type { ScoringFactor } from "@/lib/types";
 
-/** Horizontal bars for the six factors, with each factor's weight shown. */
-export function ScoreBreakdown({ factors }: { factors: ScoreFactors }) {
+interface ScoreBreakdownProps {
+  /** The published scoring model, read from the contract's reference data. */
+  factors: ScoringFactor[];
+  /** This opportunity's rating for each factor, 0-100. */
+  values: Record<ScoringFactorKey, number>;
+}
+
+/** Horizontal bars for the six factors, with each factor's published weight. */
+export function ScoreBreakdown({ factors, values }: ScoreBreakdownProps) {
   return (
     <dl className="space-y-3.5">
-      {SCORE_FACTORS.map((factor) => {
-        const value = factors[factor.key];
+      {factors.map((factor) => {
+        const value = values[factor.key];
         return (
           <div key={factor.key}>
             <div className="flex items-baseline justify-between gap-3 text-sm">
@@ -29,7 +37,7 @@ export function ScoreBreakdown({ factors }: { factors: ScoreFactors }) {
               />
             </div>
             <p className="mt-1 text-xs" style={{ color: "var(--fg-faint)" }}>
-              {factor.meaning}
+              {factor.description}
             </p>
           </div>
         );

@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { ScoreBadge } from "./ScoreBadge";
 import { hoursRange, moneyRange } from "@/lib/format";
-import type { ScoredOpportunity } from "@/lib/queries";
-import { SCORE_FACTORS } from "@/lib/types";
+import type { Opportunity, ScoringFactor } from "@/lib/types";
 
 function Picker({
   label,
@@ -14,7 +13,7 @@ function Picker({
 }: {
   label: string;
   value: string;
-  options: ScoredOpportunity[];
+  options: Opportunity[];
   onChange: (slug: string) => void;
 }) {
   return (
@@ -38,7 +37,13 @@ function Picker({
   );
 }
 
-export function CompareTool({ opportunities }: { opportunities: ScoredOpportunity[] }) {
+export function CompareTool({
+  opportunities,
+  scoringFactors,
+}: {
+  opportunities: Opportunity[];
+  scoringFactors: ScoringFactor[];
+}) {
   const [leftSlug, setLeftSlug] = useState(opportunities[0]?.slug ?? "");
   const [rightSlug, setRightSlug] = useState(opportunities[1]?.slug ?? "");
 
@@ -51,7 +56,7 @@ export function CompareTool({ opportunities }: { opportunities: ScoredOpportunit
     { label: "Startup Cost", left: moneyRange(left.startupCost), right: moneyRange(right.startupCost) },
     { label: "Profit / Month", left: moneyRange(left.monthlyProfit), right: moneyRange(right.monthlyProfit) },
     { label: "Time / Week", left: hoursRange(left.hoursPerWeek), right: hoursRange(right.hoursPerWeek) },
-    { label: "Flexibility", left: left.flexibility, right: right.flexibility },
+    { label: "Flexibility", left: left.flexibilityLabel, right: right.flexibilityLabel },
   ];
 
   return (
@@ -93,7 +98,7 @@ export function CompareTool({ opportunities }: { opportunities: ScoredOpportunit
               </tr>
             ))}
 
-            {SCORE_FACTORS.map((factor) => {
+            {scoringFactors.map((factor) => {
               const a = left.factors[factor.key];
               const b = right.factors[factor.key];
               return (

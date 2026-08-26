@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card, PageHeader } from "@/components/PageShell";
 import { Prose } from "@/components/Prose";
-import { allScored } from "@/lib/queries";
-import { SCORE_FACTORS } from "@/lib/types";
+import { countOpportunities, getScoringFactors } from "@/lib/repository";
 
 export const metadata: Metadata = {
   title: "Methodology",
@@ -11,8 +10,8 @@ export const metadata: Metadata = {
     "How the Overall Score is calculated: six weighted factors, what each one measures, and what the numbers on this site are and are not.",
 };
 
-export default function MethodologyPage() {
-  const total = allScored().length;
+export default async function MethodologyPage() {
+  const [total, factors] = await Promise.all([countOpportunities(), getScoringFactors()]);
 
   return (
     <>
@@ -35,7 +34,7 @@ export default function MethodologyPage() {
         </Prose>
 
         <ul className="mt-4 grid max-w-4xl gap-3 sm:grid-cols-2">
-          {SCORE_FACTORS.map((factor) => (
+          {factors.map((factor) => (
             <Card as="li" key={factor.key} className="p-4">
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="font-semibold">{factor.label}</h3>
@@ -44,7 +43,7 @@ export default function MethodologyPage() {
                 </span>
               </div>
               <p className="mt-1.5 text-sm" style={{ color: "var(--fg-muted)" }}>
-                {factor.meaning}
+                {factor.description}
               </p>
             </Card>
           ))}

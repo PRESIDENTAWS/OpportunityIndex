@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { FilterRail } from "./FilterRail";
+import type { Category } from "@/lib/types";
 import { Icon } from "./Icon";
 
 /** Opens the filter rail as a bottom sheet on small screens. */
-export function MobileFilterButton() {
+export function MobileFilterButton({ categories }: { categories: Category[] }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -32,7 +33,7 @@ export function MobileFilterButton() {
             className="max-h-[80vh] overflow-y-auto rounded-t-2xl border-t p-5"
             style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
           >
-            <FilterRail variant="sheet" onDone={() => setOpen(false)} />
+            <FilterRail categories={categories} variant="sheet" onDone={() => setOpen(false)} />
           </div>
         </div>
       )}

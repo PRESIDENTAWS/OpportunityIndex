@@ -6,11 +6,12 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Breadcrumbs, Card } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { FUNDING } from "@/data/funding";
+import { getFundingProgram, getFundingProgramSlugs } from "@/lib/repository";
 import { money } from "@/lib/format";
 
-export function generateStaticParams() {
-  return FUNDING.map((f) => ({ slug: f.slug }));
+export async function generateStaticParams() {
+  const slugs = await getFundingProgramSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -19,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const program = FUNDING.find((f) => f.slug === slug);
+  const program = await getFundingProgram(slug);
   if (!program) return { title: "Not found" };
   return { title: program.name, description: program.summary };
 }
@@ -30,7 +31,7 @@ export default async function FundingProgramPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const program = FUNDING.find((f) => f.slug === slug);
+  const program = await getFundingProgram(slug);
   if (!program) notFound();
 
   return (
@@ -45,7 +46,7 @@ export default async function FundingProgramPage({
             ]}
           />
           <p className="mt-5 text-xs" style={{ color: "var(--fg-faint)" }}>
-            {program.type}
+            {program.fundingType}
           </p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight lg:text-4xl">{program.name}</h1>
           <p className="mt-3 max-w-2xl" style={{ color: "var(--fg-muted)" }}>

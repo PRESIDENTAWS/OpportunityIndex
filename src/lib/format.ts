@@ -1,4 +1,4 @@
-import type { Range } from "./types";
+import type { HoursRange, MoneyRange } from "./types";
 
 const usd = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -25,13 +25,13 @@ export function moneyCompact(value: number): string {
 }
 
 /** "$100 – $500" or "$1,000 – $5,000+" when the range is open-ended. */
-export function moneyRange(range: Range): string {
+export function moneyRange(range: MoneyRange): string {
   const high = money(range.max) + (range.openEnded ? "+" : "");
   return `${money(range.min)} – ${high}`;
 }
 
 /** "5 – 15 hrs" */
-export function hoursRange(range: Range): string {
+export function hoursRange(range: HoursRange): string {
   return `${range.min} – ${range.max} hrs`;
 }
 

@@ -7,13 +7,20 @@ import { OpportunityTable } from "./OpportunityTable";
 import { SortSelect } from "./SortSelect";
 import { SponsorCard, SPONSORS } from "./SponsorCard";
 import { plural } from "@/lib/format";
-import type { ScoredOpportunity } from "@/lib/queries";
+import type { Category } from "@/lib/types";
+import type { Opportunity } from "@/lib/types";
 
 /**
  * The three-column index view (filters · results · sponsor rail) shared by
  * /hustles and every category page.
  */
-export function IndexLayout({ results }: { results: ScoredOpportunity[] }) {
+export function IndexLayout({
+  results,
+  categories,
+}: {
+  results: Opportunity[];
+  categories: Category[];
+}) {
   return (
     <div className="container-oi grid gap-6 py-8 lg:grid-cols-[15rem_minmax(0,1fr)] 2xl:grid-cols-[15rem_minmax(0,1fr)_18rem]">
       <aside
@@ -21,7 +28,7 @@ export function IndexLayout({ results }: { results: ScoredOpportunity[] }) {
         style={{ borderColor: "var(--border)" }}
       >
         <Suspense fallback={null}>
-          <FilterRail />
+          <FilterRail categories={categories} />
         </Suspense>
       </aside>
 
@@ -32,7 +39,7 @@ export function IndexLayout({ results }: { results: ScoredOpportunity[] }) {
           </p>
           <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none">
             <Suspense fallback={null}>
-              <MobileFilterButton />
+              <MobileFilterButton categories={categories} />
               <SortSelect />
             </Suspense>
           </div>

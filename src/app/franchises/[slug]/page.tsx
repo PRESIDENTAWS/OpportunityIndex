@@ -6,11 +6,12 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Breadcrumbs, Card } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { FRANCHISES } from "@/data/franchises";
+import { getFranchise, getFranchiseSlugs } from "@/lib/repository";
 import { formatDate, money, moneyRange } from "@/lib/format";
 
-export function generateStaticParams() {
-  return FRANCHISES.map((f) => ({ slug: f.slug }));
+export async function generateStaticParams() {
+  const slugs = await getFranchiseSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -19,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const franchise = FRANCHISES.find((f) => f.slug === slug);
+  const franchise = await getFranchise(slug);
   if (!franchise) return { title: "Not found" };
   return { title: franchise.name, description: franchise.summary };
 }
@@ -30,7 +31,7 @@ export default async function FranchisePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const franchise = FRANCHISES.find((f) => f.slug === slug);
+  const franchise = await getFranchise(slug);
   if (!franchise) notFound();
 
   return (
@@ -45,8 +46,8 @@ export default async function FranchisePage({
             ]}
           />
           <p className="mt-5 text-xs" style={{ color: "var(--fg-faint)" }}>
-            {franchise.industry} · Founded {franchise.yearFounded} ·{" "}
-            {franchise.units.toLocaleString("en-US")} units
+            {franchise.industry} · Founded {franchise.foundedYear} ·{" "}
+            {franchise.unitCount.toLocaleString("en-US")} units
           </p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight lg:text-4xl">{franchise.name}</h1>
           <p className="mt-3 max-w-2xl" style={{ color: "var(--fg-muted)" }}>
@@ -66,9 +67,9 @@ export default async function FranchisePage({
               ["Franchise fee", money(franchise.franchiseFee)],
               ["Total investment", moneyRange(franchise.totalInvestment)],
               ["Ongoing royalty", franchise.royalty],
-              ["Liquid capital required", money(franchise.liquidCapital)],
-              ["Units in system", franchise.units.toLocaleString("en-US")],
-              ["Data updated", formatDate(franchise.updated)],
+              ["Liquid capital required", money(franchise.liquidCapitalRequired)],
+              ["Units in system", franchise.unitCount.toLocaleString("en-US")],
+              ["Data reviewed", formatDate(franchise.reviewedAt)],
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between gap-4 px-4 py-3">
                 <dt style={{ color: "var(--fg-muted)" }}>{label}</dt>

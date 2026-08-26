@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
-import { FRANCHISES } from "@/data/franchises";
-import { FUNDING } from "@/data/funding";
-import { LISTINGS } from "@/data/listings";
-import { OPPORTUNITIES } from "@/data/opportunities";
-import { RESEARCH } from "@/data/research";
-import { CATEGORIES } from "@/lib/types";
+import {
+  getCategories,
+  listBusinessListings,
+  listFranchises,
+  listFundingPrograms,
+  listOpportunities,
+  listResearchPieces,
+} from "@/lib/repository";
 
 const BASE = "https://opportunityindex.com";
 
@@ -30,7 +32,17 @@ const STATIC_PATHS = [
   "/disclaimer",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [categories, opportunities, listings, franchises, funding, research] =
+    await Promise.all([
+      getCategories(),
+      listOpportunities(),
+      listBusinessListings(),
+      listFranchises(),
+      listFundingPrograms(),
+      listResearchPieces(),
+    ]);
+
   const entries: MetadataRoute.Sitemap = STATIC_PATHS.map((path) => ({
     url: `${BASE}${path}`,
     changeFrequency: "weekly",
@@ -39,26 +51,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...entries,
-    ...CATEGORIES.map((c) => ({ url: `${BASE}/businesses/${c.slug}`, priority: 0.6 })),
-    ...OPPORTUNITIES.map((o) => ({
+    ...categories.map((c) => ({ url: `${BASE}/businesses/${c.slug}`, priority: 0.6 })),
+    ...opportunities.map((o) => ({
       url: `${BASE}/hustles/${o.slug}`,
-      lastModified: new Date(o.updated),
+      lastModified: new Date(o.reviewedAt),
       priority: 0.8,
     })),
-    ...LISTINGS.map((l) => ({
+    ...listings.map((l) => ({
       url: `${BASE}/businesses-for-sale/${l.slug}`,
-      lastModified: new Date(l.updated),
+      lastModified: new Date(l.reviewedAt),
       priority: 0.6,
     })),
-    ...FRANCHISES.map((f) => ({
+    ...franchises.map((f) => ({
       url: `${BASE}/franchises/${f.slug}`,
-      lastModified: new Date(f.updated),
+      lastModified: new Date(f.reviewedAt),
       priority: 0.6,
     })),
-    ...FUNDING.map((f) => ({ url: `${BASE}/funding/${f.slug}`, priority: 0.6 })),
-    ...RESEARCH.map((r) => ({
+    ...funding.map((f) => ({ url: `${BASE}/funding/${f.slug}`, priority: 0.6 })),
+    ...research.map((r) => ({
       url: `${BASE}/research/${r.slug}`,
-      lastModified: new Date(r.published),
+      lastModified: new Date(r.publishedAt),
       priority: 0.6,
     })),
   ];

@@ -1,113 +1,87 @@
-export type CategorySlug =
-  | "online"
-  | "service"
-  | "e-commerce"
-  | "local-business"
-  | "creative";
+import type {
+  CategorySlug,
+  Flexibility,
+  ListingStatus,
+  ResearchKind,
+  ScoringFactorKey,
+} from "./contract";
+
+export type { CategorySlug, Flexibility, ListingStatus, ResearchKind, ScoringFactorKey };
+
+/**
+ * Domain types: what components consume.
+ *
+ * These are the camelCase counterpart of the snake_case rows in `contract.ts`.
+ * The repository translates between them exactly once, per the naming
+ * translation rules in `docs/DATA_MODEL.md`.
+ */
+
+/** A money range in whole US dollars. `openEnded` renders the max as "$X+". */
+export interface MoneyRange {
+  min: number;
+  max: number;
+  openEnded: boolean;
+}
+
+/** Hours per week. The contract defines no open-ended form for these. */
+export interface HoursRange {
+  min: number;
+  max: number;
+}
 
 export interface Category {
   slug: CategorySlug;
   label: string;
+  description: string;
 }
 
-export const CATEGORIES: Category[] = [
-  { slug: "online", label: "Online" },
-  { slug: "service", label: "Service" },
-  { slug: "e-commerce", label: "E-Commerce" },
-  { slug: "local-business", label: "Local Business" },
-  { slug: "creative", label: "Creative" },
-];
-
-export type Flexibility = "Anywhere" | "Remote" | "Local";
-
-/** A money range. `openEnded` renders the upper bound as "$X+". */
-export interface Range {
-  min: number;
-  max: number;
-  openEnded?: boolean;
-}
-
-/**
- * The six factors behind every Overall Score. Each is 0-100, where higher is
- * always better for the operator (so `startupCost: 90` means *cheap* to start,
- * and `competition: 90` means the field is *not* crowded).
- */
-export interface ScoreFactors {
-  demand: number;
-  startupCost: number;
-  profitPotential: number;
-  timeToRevenue: number;
-  competition: number;
-  scalability: number;
-}
-
-export interface FactorMeta {
-  key: keyof ScoreFactors;
+export interface ScoringFactor {
+  key: ScoringFactorKey;
   label: string;
+  description: string;
   weight: number;
-  /** What a high score on this factor means. */
-  meaning: string;
 }
 
-/** Weights sum to 1. Kept here so the methodology page and the scorer agree. */
-export const SCORE_FACTORS: FactorMeta[] = [
-  {
-    key: "demand",
-    label: "Market Demand",
-    weight: 0.25,
-    meaning: "Buyers are actively searching and spending in this market today.",
-  },
-  {
-    key: "profitPotential",
-    label: "Profit Potential",
-    weight: 0.22,
-    meaning: "Realistic monthly take-home once the operation is established.",
-  },
-  {
-    key: "startupCost",
-    label: "Low Startup Cost",
-    weight: 0.18,
-    meaning: "Little capital is needed to get to a first paying customer.",
-  },
-  {
-    key: "timeToRevenue",
-    label: "Speed to Revenue",
-    weight: 0.15,
-    meaning: "The gap between starting and being paid is short.",
-  },
-  {
-    key: "scalability",
-    label: "Scalability",
-    weight: 0.12,
-    meaning: "Revenue can grow without hours growing at the same rate.",
-  },
-  {
-    key: "competition",
-    label: "Competitive Room",
-    weight: 0.08,
-    meaning: "The field is not yet saturated; a newcomer can still win work.",
-  },
-];
+export interface OpportunityStep {
+  position: number;
+  title: string;
+  detail: string;
+}
 
 export interface Opportunity {
   slug: string;
   name: string;
   tagline: string;
   icon: string;
-  category: CategorySlug;
-  startupCost: Range;
-  monthlyProfit: Range;
-  hoursPerWeek: Range;
+  categorySlug: CategorySlug;
+  categoryLabel: string;
+
+  startupCost: MoneyRange;
+  monthlyProfit: MoneyRange;
+  hoursPerWeek: HoursRange;
+
   flexibility: Flexibility;
-  factors: ScoreFactors;
-  /** Long-form body for the detail page. */
+  /** Display form of `flexibility`. Capitalisation is presentation-only. */
+  flexibilityLabel: string;
+
   summary: string;
   skills: string[];
   pros: string[];
   cons: string[];
-  steps: { title: string; detail: string }[];
   tools: string[];
-  updated: string;
+  steps: OpportunityStep[];
+
+  /** The six factors, 0-100, higher always better for the operator. */
+  factors: Record<ScoringFactorKey, number>;
+
+  /**
+   * The database's generated `overall_score`. Read, never recomputed — see
+   * `docs/DATA_MODEL.md`.
+   */
+  score: number;
+
+  /** Editorial review date, not a row modification timestamp. */
+  reviewedAt: string;
 }
 
 export interface BusinessListing {
@@ -116,14 +90,17 @@ export interface BusinessListing {
   industry: string;
   location: string;
   askingPrice: number;
-  revenue: number;
+  annualRevenue: number;
   cashFlow: number;
-  established: number;
-  employees: number;
+  establishedYear: number;
+  employeeCount: number;
   ownerFinancing: boolean;
   reasonForSale: string;
   highlights: string[];
-  updated: string;
+  status: ListingStatus;
+  reviewedAt: string;
+  /** Asking price over cash flow. Safe: the schema constrains cash flow > 0. */
+  cashFlowMultiple: number;
 }
 
 export interface Franchise {
@@ -131,36 +108,42 @@ export interface Franchise {
   name: string;
   industry: string;
   franchiseFee: number;
-  totalInvestment: Range;
+  totalInvestment: MoneyRange;
   royalty: string;
-  units: number;
-  yearFounded: number;
-  liquidCapital: number;
+  liquidCapitalRequired: number;
+  unitCount: number;
+  foundedYear: number;
   summary: string;
   support: string[];
-  updated: string;
+  reviewedAt: string;
 }
 
 export interface FundingProgram {
   slug: string;
   name: string;
-  type: string;
-  amount: Range;
+  fundingType: string;
+  amount: MoneyRange;
   typicalRate: string;
   speed: string;
+  /** Null means not underwritten on a credit score at all. */
   minCreditScore: number | null;
   timeInBusiness: string;
   bestFor: string;
-  requirements: string[];
   summary: string;
+  requirements: string[];
+  reviewedAt: string;
 }
 
 export interface ResearchPiece {
   slug: string;
   title: string;
-  kind: "Report" | "Guide" | "Data Study";
-  readingTime: number;
-  published: string;
+  kind: ResearchKind;
+  /** Display form of `kind` — "Data Study" for `data_study`. */
+  kindLabel: string;
   excerpt: string;
+  /** Null while takeaways publish ahead of the full write-up. */
+  body: string | null;
   takeaways: string[];
+  readingTimeMinutes: number;
+  publishedAt: string;
 }

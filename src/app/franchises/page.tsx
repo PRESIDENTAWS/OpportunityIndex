@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Card, PageHeader } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { FRANCHISES } from "@/data/franchises";
+import { listFranchises } from "@/lib/repository";
 import { money, moneyRange, plural } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -14,7 +14,9 @@ export const metadata: Metadata = {
     "Franchise concepts with fees, total investment, royalties, and liquid capital requirements shown side by side.",
 };
 
-export default function FranchisesPage() {
+export default async function FranchisesPage() {
+  const franchises = await listFranchises();
+
   return (
     <>
       <PageHeader
@@ -26,22 +28,22 @@ export default function FranchisesPage() {
       <div className="container-oi grid gap-6 py-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
           <p className="mb-4 text-sm" style={{ color: "var(--fg-faint)" }}>
-            {plural(FRANCHISES.length, "concept")}
+            {plural(franchises.length, "concept")}
           </p>
 
           <ul className="space-y-3">
-            {FRANCHISES.map((franchise) => (
+            {franchises.map((franchise) => (
               <Card as="li" key={franchise.slug} className="p-5">
                 <Link href={`/franchises/${franchise.slug}`} className="block">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="text-xs" style={{ color: "var(--fg-faint)" }}>
-                        {franchise.industry} · Founded {franchise.yearFounded}
+                        {franchise.industry} · Founded {franchise.foundedYear}
                       </p>
                       <h2 className="mt-1 text-lg font-semibold">{franchise.name}</h2>
                     </div>
                     <span className="text-xs" style={{ color: "var(--fg-muted)" }}>
-                      {franchise.units.toLocaleString("en-US")} units
+                      {franchise.unitCount.toLocaleString("en-US")} units
                     </span>
                   </div>
 
@@ -54,7 +56,7 @@ export default function FranchisesPage() {
                       ["Franchise Fee", money(franchise.franchiseFee)],
                       ["Total Investment", moneyRange(franchise.totalInvestment)],
                       ["Royalty", franchise.royalty],
-                      ["Liquid Capital", money(franchise.liquidCapital)],
+                      ["Liquid Capital", money(franchise.liquidCapitalRequired)],
                     ].map(([label, value]) => (
                       <div key={label}>
                         <dt

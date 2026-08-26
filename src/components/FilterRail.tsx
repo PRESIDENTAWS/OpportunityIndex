@@ -3,12 +3,12 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { Icon } from "./Icon";
-import { COST_BANDS } from "@/lib/queries";
-import { CATEGORIES } from "@/lib/types";
-
-const FLEXIBILITY = ["Anywhere", "Remote", "Local"];
+import { COST_BANDS, FLEXIBILITY_VALUES, flexibilityLabel } from "@/lib/repository";
+import type { Category } from "@/lib/types";
 
 interface FilterRailProps {
+  /** Passed in by the page: a client component performs no data access. */
+  categories: Category[];
   /** Rendered inside a mobile sheet rather than the desktop rail. */
   variant?: "rail" | "sheet";
   onDone?: () => void;
@@ -18,7 +18,7 @@ interface FilterRailProps {
  * Filters are held in the URL, so a filtered view is shareable, survives a
  * refresh, and can be rendered on the server.
  */
-export function FilterRail({ variant = "rail", onDone }: FilterRailProps) {
+export function FilterRail({ categories, variant = "rail", onDone }: FilterRailProps) {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
@@ -108,7 +108,7 @@ export function FilterRail({ variant = "rail", onDone }: FilterRailProps) {
       </form>
 
       <FilterGroup title="Category">
-        {CATEGORIES.map((category) => (
+        {categories.map((category) => (
           <Checkbox
             key={category.slug}
             label={category.label}
@@ -130,10 +130,10 @@ export function FilterRail({ variant = "rail", onDone }: FilterRailProps) {
       </FilterGroup>
 
       <FilterGroup title="Flexibility">
-        {FLEXIBILITY.map((option) => (
+        {FLEXIBILITY_VALUES.map((option) => (
           <Checkbox
             key={option}
-            label={option}
+            label={flexibilityLabel(option)}
             checked={isChecked("flex", option)}
             onChange={() => toggle("flex", option)}
           />

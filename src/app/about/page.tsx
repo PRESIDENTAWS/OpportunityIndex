@@ -3,11 +3,13 @@ import Link from "next/link";
 import { HorizonCard } from "@/components/HorizonCard";
 import { Card, PageHeader } from "@/components/PageShell";
 import { Prose } from "@/components/Prose";
-import { LISTINGS } from "@/data/listings";
-import { FRANCHISES } from "@/data/franchises";
-import { FUNDING } from "@/data/funding";
-import { RESEARCH } from "@/data/research";
-import { allScored } from "@/lib/queries";
+import {
+  countOpportunities,
+  listBusinessListings,
+  listFranchises,
+  listFundingPrograms,
+  listResearchPieces,
+} from "@/lib/repository";
 
 export const metadata: Metadata = {
   title: "About",
@@ -15,13 +17,22 @@ export const metadata: Metadata = {
     "Opportunity Index is an independent index of side hustles, businesses, franchises, and acquisitions — all scored on one transparent scale.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Counts are derived from the data, never hard-coded — see PRODUCT_SPEC.md.
+  const [opportunities, listings, franchises, funding, research] = await Promise.all([
+    countOpportunities(),
+    listBusinessListings(),
+    listFranchises(),
+    listFundingPrograms(),
+    listResearchPieces(),
+  ]);
+
   const stats = [
-    ["Business models", allScored().length],
-    ["Businesses for sale", LISTINGS.length],
-    ["Franchise concepts", FRANCHISES.length],
-    ["Funding routes", FUNDING.length],
-    ["Research pieces", RESEARCH.length],
+    ["Business models", opportunities],
+    ["Businesses for sale", listings.length],
+    ["Franchise concepts", franchises.length],
+    ["Funding routes", funding.length],
+    ["Research pieces", research.length],
   ] as const;
 
   return (

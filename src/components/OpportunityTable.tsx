@@ -3,10 +3,10 @@ import { AdSlot } from "./AdSlot";
 import { Icon } from "./Icon";
 import { ScoreBadge } from "./ScoreBadge";
 import { hoursRange, moneyRange } from "@/lib/format";
-import { categoryLabel, type ScoredOpportunity } from "@/lib/queries";
+import type { Opportunity } from "@/lib/types";
 
 interface OpportunityTableProps {
-  opportunities: ScoredOpportunity[];
+  opportunities: Opportunity[];
   /** Insert an in-content ad after every N rows. 0 disables it. */
   adEvery?: number;
   /** Ranks are drawn from position in this list unless `startRank` shifts them. */
@@ -88,14 +88,14 @@ export function OpportunityTable({
                           {o.name}
                         </span>
                         <span className="block text-xs" style={{ color: "var(--fg-faint)" }}>
-                          {categoryLabel(o.category)}
+                          {o.categoryLabel}
                         </span>
                       </span>
                     </Link>
                   </td>
                   {!compact && (
                     <td className="px-4 py-3 whitespace-nowrap" style={{ color: "var(--fg-muted)" }}>
-                      {categoryLabel(o.category)}
+                      {o.categoryLabel}
                     </td>
                   )}
                   <td className="px-4 py-3 whitespace-nowrap tabular-nums">
@@ -109,7 +109,7 @@ export function OpportunityTable({
                   </td>
                   {!compact && (
                     <td className="px-4 py-3" style={{ color: "var(--fg-muted)" }}>
-                      {o.flexibility}
+                      {o.flexibilityLabel}
                     </td>
                   )}
                   <td className="px-4 py-3 text-right">
@@ -145,7 +145,7 @@ export function OpportunityTable({
                   {o.tagline}
                 </span>
                 <span className="mt-1.5 block text-xs tabular-nums" style={{ color: "var(--fg-faint)" }}>
-                  {moneyRange(o.startupCost)} · {hoursRange(o.hoursPerWeek)} · {o.flexibility}
+                  {moneyRange(o.startupCost)} · {hoursRange(o.hoursPerWeek)} · {o.flexibilityLabel}
                 </span>
               </span>
               <ScoreBadge score={o.score} size="sm" />

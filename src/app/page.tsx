@@ -10,13 +10,16 @@ import { OpportunityTable } from "@/components/OpportunityTable";
 import { Card, SectionHeading } from "@/components/PageShell";
 import { SortSelect } from "@/components/SortSelect";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { LISTINGS } from "@/data/listings";
-import { RESEARCH } from "@/data/research";
 import { moneyCompact, plural } from "@/lib/format";
 import { CATEGORY_TABS } from "@/lib/nav";
-import { allScored, filterOpportunities } from "@/lib/queries";
-import { CATEGORIES } from "@/lib/types";
 import { parseFilters } from "@/lib/params";
+import {
+  countOpportunities,
+  getCategoryCounts,
+  listBusinessListings,
+  listOpportunities,
+  listResearchPieces,
+} from "@/lib/repository";
 
 const WHY = [
   {
@@ -43,8 +46,13 @@ export default async function HomePage({
 }) {
   const params = await searchParams;
   const filters = parseFilters(params);
-  const results = filterOpportunities(filters);
-  const total = allScored().length;
+  const [results, total, categoryCounts, listings, research] = await Promise.all([
+    listOpportunities(filters),
+    countOpportunities(),
+    getCategoryCounts(),
+    listBusinessListings(),
+    listResearchPieces(),
+  ]);
   const featured = results.slice(0, 7);
   const isFiltered = results.length !== total;
 
@@ -114,7 +122,7 @@ export default async function HomePage({
           style={{ borderColor: "var(--border)" }}
         >
           <Suspense fallback={null}>
-            <FilterRail />
+            <FilterRail categories={categoryCounts.map((c) => c.category)} />
           </Suspense>
         </aside>
 
@@ -128,7 +136,7 @@ export default async function HomePage({
                 {plural(results.length, "opportunity", "opportunities")} found
               </span>
               <Suspense fallback={null}>
-                <MobileFilterButton />
+                <MobileFilterButton categories={categoryCounts.map((c) => c.category)} />
                 <SortSelect />
               </Suspense>
             </div>
@@ -177,15 +185,14 @@ export default async function HomePage({
       <section className="container-oi mt-14">
         <SectionHeading title="Browse by Category" action={{ label: "All categories", href: "/businesses" }} />
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {CATEGORIES.map((category) => {
-            const inCategory = allScored().filter((o) => o.category === category.slug);
-            const best = inCategory[0];
+          {categoryCounts.map(({ category, count }) => {
+            const best = results.find((o) => o.categorySlug === category.slug);
             return (
               <Card as="li" key={category.slug} className="p-4">
                 <Link href={`/businesses/${category.slug}`} className="block">
                   <h3 className="font-semibold">{category.label}</h3>
                   <p className="mt-1 text-xs" style={{ color: "var(--fg-faint)" }}>
-                    {plural(inCategory.length, "model")}
+                    {plural(count, "model")}
                   </p>
                   {best && (
                     <p className="mt-3 text-sm" style={{ color: "var(--fg-muted)" }}>
@@ -206,7 +213,7 @@ export default async function HomePage({
           action={{ label: "All listings", href: "/businesses-for-sale" }}
         />
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {LISTINGS.slice(0, 3).map((listing) => (
+          {listings.slice(0, 3).map((listing) => (
             <Card as="li" key={listing.slug} className="p-5">
               <Link href={`/businesses-for-sale/${listing.slug}`} className="block">
                 <p className="text-xs" style={{ color: "var(--fg-faint)" }}>
@@ -216,7 +223,7 @@ export default async function HomePage({
                 <dl className="mt-4 grid grid-cols-3 gap-2 text-xs">
                   {[
                     ["Asking", moneyCompact(listing.askingPrice)],
-                    ["Revenue", moneyCompact(listing.revenue)],
+                    ["Revenue", moneyCompact(listing.annualRevenue)],
                     ["Cash Flow", moneyCompact(listing.cashFlow)],
                   ].map(([label, value]) => (
                     <div key={label}>
@@ -235,14 +242,14 @@ export default async function HomePage({
       <section className="container-oi mt-14">
         <SectionHeading title="Latest Research" action={{ label: "All research", href: "/research" }} />
         <ul className="grid gap-3 sm:grid-cols-3">
-          {RESEARCH.slice(0, 3).map((piece) => (
+          {research.slice(0, 3).map((piece) => (
             <Card as="li" key={piece.slug} className="p-5">
               <Link href={`/research/${piece.slug}`} className="block">
                 <p
                   className="text-[0.6rem] font-semibold tracking-eyebrow uppercase"
                   style={{ color: "var(--accent)" }}
                 >
-                  {piece.kind} · {piece.readingTime} min read
+                  {piece.kindLabel} · {piece.readingTimeMinutes} min read
                 </p>
                 <h3 className="mt-2 font-semibold">{piece.title}</h3>
                 <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>

@@ -6,11 +6,12 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Breadcrumbs, Card } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { LISTINGS } from "@/data/listings";
+import { getBusinessListing, getBusinessListingSlugs } from "@/lib/repository";
 import { formatDate, money, plural } from "@/lib/format";
 
-export function generateStaticParams() {
-  return LISTINGS.map((l) => ({ slug: l.slug }));
+export async function generateStaticParams() {
+  const slugs = await getBusinessListingSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -19,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const listing = LISTINGS.find((l) => l.slug === slug);
+  const listing = await getBusinessListing(slug);
   if (!listing) return { title: "Not found" };
   return {
     title: `${listing.name} — ${listing.location}`,
@@ -33,11 +34,11 @@ export default async function ListingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const listing = LISTINGS.find((l) => l.slug === slug);
+  const listing = await getBusinessListing(slug);
   if (!listing) notFound();
 
-  const multiple = (listing.askingPrice / listing.cashFlow).toFixed(1);
-  const margin = ((listing.cashFlow / listing.revenue) * 100).toFixed(1);
+  const multiple = listing.cashFlowMultiple.toFixed(1);
+  const margin = ((listing.cashFlow / listing.annualRevenue) * 100).toFixed(1);
 
   return (
     <>
@@ -51,14 +52,14 @@ export default async function ListingPage({
             ]}
           />
           <p className="mt-5 text-xs" style={{ color: "var(--fg-faint)" }}>
-            {listing.industry} · {listing.location} · Established {listing.established}
+            {listing.industry} · {listing.location} · Established {listing.establishedYear}
           </p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight lg:text-4xl">{listing.name}</h1>
 
           <dl className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
             {[
               ["Asking Price", money(listing.askingPrice)],
-              ["Annual Revenue", money(listing.revenue)],
+              ["Annual Revenue", money(listing.annualRevenue)],
               ["Seller Cash Flow", money(listing.cashFlow)],
               ["Multiple", `${multiple}x cash flow`],
             ].map(([label, value]) => (
@@ -103,11 +104,11 @@ export default async function ListingPage({
             >
               {[
                 ["Owner earnings margin", `${margin}% of revenue`],
-                ["Employees", plural(listing.employees, "person", "people")],
-                ["Years established", `${new Date().getFullYear() - listing.established} years`],
+                ["Employees", plural(listing.employeeCount, "person", "people")],
+                ["Years established", `${new Date().getFullYear() - listing.establishedYear} years`],
                 ["Owner financing", listing.ownerFinancing ? "Available" : "Not offered"],
                 ["Reason for sale", listing.reasonForSale],
-                ["Listing updated", formatDate(listing.updated)],
+                ["Listing reviewed", formatDate(listing.reviewedAt)],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4 px-4 py-3">
                   <dt style={{ color: "var(--fg-muted)" }}>{label}</dt>

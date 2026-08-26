@@ -6,11 +6,12 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Breadcrumbs, Card } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { RESEARCH } from "@/data/research";
+import { getResearchPiece, getResearchPieceSlugs, listResearchPieces } from "@/lib/repository";
 import { formatDate } from "@/lib/format";
 
-export function generateStaticParams() {
-  return RESEARCH.map((r) => ({ slug: r.slug }));
+export async function generateStaticParams() {
+  const slugs = await getResearchPieceSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -19,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const piece = RESEARCH.find((r) => r.slug === slug);
+  const piece = await getResearchPiece(slug);
   if (!piece) return { title: "Not found" };
   return { title: piece.title, description: piece.excerpt };
 }
@@ -30,10 +31,12 @@ export default async function ResearchPiecePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const piece = RESEARCH.find((r) => r.slug === slug);
+  const piece = await getResearchPiece(slug);
   if (!piece) notFound();
 
-  const others = RESEARCH.filter((r) => r.slug !== slug).slice(0, 3);
+  const others = (await listResearchPieces())
+    .filter((r) => r.slug !== slug)
+    .slice(0, 3);
 
   return (
     <>
@@ -50,7 +53,7 @@ export default async function ResearchPiecePage({
             className="mt-5 text-[0.6rem] font-semibold tracking-eyebrow uppercase"
             style={{ color: "var(--accent)" }}
           >
-            {piece.kind} · {piece.readingTime} min read · {formatDate(piece.published)}
+            {piece.kindLabel} · {piece.readingTimeMinutes} min read · {formatDate(piece.publishedAt)}
           </p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight lg:text-4xl">{piece.title}</h1>
           <p className="mt-3 text-lg" style={{ color: "var(--fg-muted)" }}>
@@ -108,7 +111,7 @@ export default async function ResearchPiecePage({
                 <Card as="li" key={other.slug} className="p-4">
                   <Link href={`/research/${other.slug}`} className="block">
                     <p className="text-xs" style={{ color: "var(--fg-faint)" }}>
-                      {other.kind}
+                      {other.kindLabel}
                     </p>
                     <p className="mt-1 font-semibold">{other.title}</p>
                   </Link>

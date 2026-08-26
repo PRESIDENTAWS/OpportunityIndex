@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { AdSlot } from "@/components/AdSlot";
 import { CompareTool } from "@/components/CompareTool";
 import { Breadcrumbs, PageHeader } from "@/components/PageShell";
-import { allScored } from "@/lib/queries";
+import { getScoringFactors, listOpportunities } from "@/lib/repository";
 
 export const metadata: Metadata = {
   title: "Compare Opportunities",
@@ -10,7 +10,12 @@ export const metadata: Metadata = {
     "Put two business models side by side across all six scoring factors and see exactly where they differ.",
 };
 
-export default function ComparePage() {
+export default async function ComparePage() {
+  const [opportunities, scoringFactors] = await Promise.all([
+    listOpportunities({ sort: "name" }),
+    getScoringFactors(),
+  ]);
+
   return (
     <>
       <PageHeader
@@ -26,7 +31,7 @@ export default function ComparePage() {
       </PageHeader>
 
       <div className="container-oi py-8">
-        <CompareTool opportunities={allScored()} />
+        <CompareTool opportunities={opportunities} scoringFactors={scoringFactors} />
         <div className="mt-10">
           <AdSlot format="leaderboard" />
         </div>

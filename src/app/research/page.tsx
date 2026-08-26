@@ -5,7 +5,8 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Card, PageHeader } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { RESEARCH } from "@/data/research";
+import { listResearchPieces, researchKindLabel, RESEARCH_KINDS } from "@/lib/repository";
+import type { ResearchKind } from "@/lib/contract";
 import { formatDate, plural } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -14,8 +15,6 @@ export const metadata: Metadata = {
     "Reports, guides, and data studies drawn from the index — what actually predicts survival, what things cost, and how long they take.",
 };
 
-const KINDS = ["Report", "Guide", "Data Study"] as const;
-
 export default async function ResearchPage({
   searchParams,
 }: {
@@ -23,22 +22,25 @@ export default async function ResearchPage({
 }) {
   const params = await searchParams;
   const requested = typeof params.kind === "string" ? params.kind : undefined;
-  const kind = KINDS.find((k) => k === requested);
-  const pieces = kind ? RESEARCH.filter((piece) => piece.kind === kind) : RESEARCH;
+  // Only the contract's enum labels are accepted; anything else shows everything.
+  const kind = RESEARCH_KINDS.find((k) => k === requested) as ResearchKind | undefined;
+  const pieces = await listResearchPieces(kind);
 
   return (
     <>
       <PageHeader
         eyebrow="Research"
-        title={kind ? `${kind}s` : "Research"}
+        title={kind ? `${researchKindLabel(kind)}s` : "Research"}
         description="What the index shows once you stop looking at individual opportunities and start looking at the pattern across all of them."
       >
         <nav aria-label="Filter research" className="mt-5 flex flex-wrap gap-2">
-          {[{ label: "All", href: "/research" }, ...KINDS.map((k) => ({
-            label: `${k}s`,
-            href: `/research?kind=${encodeURIComponent(k)}`,
-          }))].map((tab) => {
-            const active = tab.label === "All" ? !kind : tab.label === `${kind}s`;
+          {[{ label: "All", href: "/research", value: undefined as ResearchKind | undefined },
+            ...RESEARCH_KINDS.map((k) => ({
+              label: `${researchKindLabel(k)}s`,
+              href: `/research?kind=${encodeURIComponent(k)}`,
+              value: k as ResearchKind | undefined,
+            }))].map((tab) => {
+            const active = tab.value === kind;
             return (
               <Link
                 key={tab.href}
@@ -72,7 +74,7 @@ export default async function ResearchPage({
                       className="text-[0.6rem] font-semibold tracking-eyebrow uppercase"
                       style={{ color: "var(--accent)" }}
                     >
-                      {piece.kind} · {piece.readingTime} min read · {formatDate(piece.published)}
+                      {piece.kindLabel} · {piece.readingTimeMinutes} min read · {formatDate(piece.publishedAt)}
                     </p>
                     <h2 className="mt-2 text-lg font-semibold">{piece.title}</h2>
                     <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>

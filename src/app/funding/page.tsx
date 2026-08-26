@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Card, PageHeader } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { FUNDING } from "@/data/funding";
+import { listFundingPrograms } from "@/lib/repository";
 import { moneyCompact } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -14,7 +14,9 @@ export const metadata: Metadata = {
     "SBA loans, DSCR property loans, lines of credit, equipment finance, microloans, and revenue-based financing compared on rate, speed, and eligibility.",
 };
 
-export default function FundingPage() {
+export default async function FundingPage() {
+  const programs = await listFundingPrograms();
+
   return (
     <>
       <PageHeader
@@ -45,7 +47,7 @@ export default function FundingPage() {
                 </tr>
               </thead>
               <tbody>
-                {FUNDING.map((program) => (
+                {programs.map((program) => (
                   <tr
                     key={program.slug}
                     className="border-t transition-colors hover:bg-[var(--bg-subtle)]"
@@ -56,7 +58,7 @@ export default function FundingPage() {
                         {program.name}
                       </Link>
                       <span className="block text-xs" style={{ color: "var(--fg-faint)" }}>
-                        {program.type}
+                        {program.fundingType}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap tabular-nums">
@@ -78,12 +80,12 @@ export default function FundingPage() {
 
           {/* Mobile cards */}
           <ul className="space-y-3 lg:hidden">
-            {FUNDING.map((program) => (
+            {programs.map((program) => (
               <Card as="li" key={program.slug} className="p-4">
                 <Link href={`/funding/${program.slug}`} className="block">
                   <h2 className="font-semibold">{program.name}</h2>
                   <p className="mt-0.5 text-xs" style={{ color: "var(--fg-faint)" }}>
-                    {program.type}
+                    {program.fundingType}
                   </p>
                   <dl className="mt-3 grid grid-cols-2 gap-3 text-xs">
                     {[

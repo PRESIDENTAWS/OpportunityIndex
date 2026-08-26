@@ -5,7 +5,7 @@ import { Card, PageHeader, SectionHeading } from "@/components/PageShell";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { AdSlot } from "@/components/AdSlot";
 import { hoursRange, moneyRange, plural } from "@/lib/format";
-import { allScored, categoryCounts } from "@/lib/queries";
+import { getCategoryCounts, listOpportunities } from "@/lib/repository";
 
 export const metadata: Metadata = {
   title: "Business Models by Category",
@@ -13,9 +13,8 @@ export const metadata: Metadata = {
     "Browse every business model in the index by category — online, service, e-commerce, local, and creative.",
 };
 
-export default function BusinessesPage() {
-  const counts = categoryCounts();
-  const scored = allScored();
+export default async function BusinessesPage() {
+  const [counts, scored] = await Promise.all([getCategoryCounts(), listOpportunities()]);
 
   return (
     <>
@@ -27,13 +26,13 @@ export default function BusinessesPage() {
 
       <div className="container-oi py-8">
         <ul className="space-y-8">
-          {counts.map((category) => {
-            const models = scored.filter((o) => o.category === category.slug);
+          {counts.map(({ category, count }) => {
+            const models = scored.filter((o) => o.categorySlug === category.slug);
             return (
               <li key={category.slug}>
                 <SectionHeading
                   title={category.label}
-                  count={plural(category.count, "model")}
+                  count={plural(count, "model")}
                   action={{ label: `All ${category.label}`, href: `/businesses/${category.slug}` }}
                 />
                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

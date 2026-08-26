@@ -8,13 +8,26 @@ import { Breadcrumbs, Card, SectionHeading } from "@/components/PageShell";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
-import { OPPORTUNITIES } from "@/data/opportunities";
 import { formatDate, hoursRange, moneyRange } from "@/lib/format";
-import { categoryLabel, getOpportunity, relatedOpportunities } from "@/lib/queries";
-import { scoreVerdict } from "@/lib/scoring";
+import {
+  getOpportunity,
+  getOpportunitySlugs,
+  getRelatedOpportunities,
+  getScoringFactors,
+} from "@/lib/repository";
 
-export function generateStaticParams() {
-  return OPPORTUNITIES.map((o) => ({ slug: o.slug }));
+/** Plain-language read on a generated score, shown under the badge. */
+function scoreVerdict(score: number): string {
+  if (score >= 88) return "Exceptional — top of the index this quarter.";
+  if (score >= 80) return "Strong — favourable on most factors.";
+  if (score >= 70) return "Solid — workable with the right advantages.";
+  if (score >= 60) return "Mixed — one or two factors carry real drag.";
+  return "Challenging — go in with clear eyes.";
+}
+
+export async function generateStaticParams() {
+  const slugs = await getOpportunitySlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -22,7 +35,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const opportunity = getOpportunity((await params).slug);
+  const { slug } = await params;
+  const opportunity = await getOpportunity(slug);
   if (!opportunity) return { title: "Not found" };
   return {
     title: `${opportunity.name} — Score ${opportunity.score}`,
@@ -36,15 +50,18 @@ export default async function OpportunityPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const opportunity = getOpportunity(slug);
+  const opportunity = await getOpportunity(slug);
   if (!opportunity) notFound();
 
-  const related = relatedOpportunities(slug);
+  const [related, scoringFactors] = await Promise.all([
+    getRelatedOpportunities(slug),
+    getScoringFactors(),
+  ]);
   const stats = [
     { label: "Startup Cost", value: moneyRange(opportunity.startupCost), icon: "bank" },
     { label: "Profit Potential / Month", value: moneyRange(opportunity.monthlyProfit), icon: "chart" },
     { label: "Time / Week", value: hoursRange(opportunity.hoursPerWeek), icon: "clock" },
-    { label: "Flexibility", value: opportunity.flexibility, icon: "pin" },
+    { label: "Flexibility", value: opportunity.flexibilityLabel, icon: "pin" },
   ];
 
   return (
@@ -55,7 +72,7 @@ export default async function OpportunityPage({
             trail={[
               { label: "Home", href: "/" },
               { label: "Hustles", href: "/hustles" },
-              { label: categoryLabel(opportunity.category), href: `/businesses/${opportunity.category}` },
+              { label: opportunity.categoryLabel, href: `/businesses/${opportunity.categorySlug}` },
               { label: opportunity.name },
             ]}
           />
@@ -73,7 +90,7 @@ export default async function OpportunityPage({
                   className="text-[0.65rem] font-semibold tracking-eyebrow uppercase"
                   style={{ color: "var(--fg-faint)" }}
                 >
-                  {categoryLabel(opportunity.category)}
+                  {opportunity.categoryLabel}
                 </p>
                 <h1 className="mt-1 text-3xl font-bold tracking-tight lg:text-4xl">
                   {opportunity.name}
@@ -165,13 +182,13 @@ export default async function OpportunityPage({
           <section className="mt-10">
             <h2 className="text-lg font-bold">How to Start</h2>
             <ol className="mt-4 space-y-4">
-              {opportunity.steps.map((step, index) => (
-                <li key={step.title} className="flex gap-4">
+              {opportunity.steps.map((step) => (
+                <li key={step.position} className="flex gap-4">
                   <span
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums"
                     style={{ backgroundColor: "var(--bg-inset)", color: "var(--fg)" }}
                   >
-                    {index + 1}
+                    {step.position}
                   </span>
                   <div>
                     <h3 className="font-semibold">{step.title}</h3>
@@ -224,7 +241,7 @@ export default async function OpportunityPage({
                     <span>
                       <span className="block text-sm font-semibold">{other.name}</span>
                       <span className="mt-1 block text-xs" style={{ color: "var(--fg-faint)" }}>
-                        {categoryLabel(other.category)}
+                        {other.categoryLabel}
                       </span>
                     </span>
                     <ScoreBadge score={other.score} size="sm" />
@@ -239,9 +256,9 @@ export default async function OpportunityPage({
           <Card className="p-5">
             <h2 className="text-sm font-bold">Score Breakdown</h2>
             <p className="mt-1 mb-4 text-xs" style={{ color: "var(--fg-faint)" }}>
-              Updated {formatDate(opportunity.updated)}
+              Reviewed {formatDate(opportunity.reviewedAt)}
             </p>
-            <ScoreBreakdown factors={opportunity.factors} />
+            <ScoreBreakdown factors={scoringFactors} values={opportunity.factors} />
             <Link
               href="/methodology"
               className="mt-5 inline-flex items-center gap-1.5 text-xs font-medium"
