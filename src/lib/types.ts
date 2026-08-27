@@ -71,7 +71,7 @@ export interface Opportunity {
   tools: string[];
   steps: OpportunityStep[];
 
-  /** The six factors, 0-100, higher always better for the operator. */
+  /** Each scored dimension, 0-100, higher always better for the operator. */
   factors: Record<ScoringFactorKey, number>;
 
   /**

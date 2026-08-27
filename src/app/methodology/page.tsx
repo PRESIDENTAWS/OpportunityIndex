@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, PageHeader } from "@/components/PageShell";
 import { Prose } from "@/components/Prose";
 import { countOpportunities, getScoringFactors } from "@/lib/repository";
+import { PLANNED_DIMENSIONS } from "@/lib/scoring-model";
 
 export const metadata: Metadata = {
   title: "Methodology",
@@ -24,13 +25,13 @@ export default async function MethodologyPage() {
       <div className="container-oi py-8">
         <Prose>
           <p>
-            The Overall Score is a weighted blend of six factors, each rated 0-100.
-            Higher is always better for the operator, so a high &ldquo;Low Startup
-            Cost&rdquo; score means the business is cheap to start, and a high
-            &ldquo;Competitive Room&rdquo; score means the field is not yet crowded.
+            The Overall Score is a weighted blend of five factors, each rated
+            0-100. Higher is always better for the operator, so a high
+            &ldquo;Startup Affordability&rdquo; score means the business is
+            <em> cheap</em> to start, not expensive.
           </p>
 
-          <h2>The six factors</h2>
+          <h2>The five scored factors</h2>
         </Prose>
 
         <ul className="mt-4 grid max-w-4xl gap-3 sm:grid-cols-2">
@@ -51,12 +52,57 @@ export default async function MethodologyPage() {
 
         <div className="mt-8">
           <Prose>
+            <h2>What we do not yet score</h2>
+            <p>
+              Two dimensions belong in this model and are deliberately absent,
+              because no opportunity record carries data that supports them. We
+              would rather publish a five-factor score and say so than infer two
+              more from fields that do not measure them:
+            </p>
+          </Prose>
+        </div>
+
+        <ul className="mt-4 grid max-w-4xl gap-3 sm:grid-cols-2">
+          {PLANNED_DIMENSIONS.map((dimension) => (
+            <Card as="li" key={dimension.label} className="p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="font-semibold">{dimension.label}</h3>
+                <span
+                  className="rounded-full px-2 py-0.5 text-[0.6rem] font-semibold tracking-eyebrow uppercase"
+                  style={{ backgroundColor: "var(--bg-inset)", color: "var(--fg-muted)" }}
+                >
+                  Planned
+                </span>
+              </div>
+              <p className="mt-1.5 text-sm" style={{ color: "var(--fg-muted)" }}>
+                {dimension.reason}
+              </p>
+            </Card>
+          ))}
+        </ul>
+
+        <div className="mt-8">
+          <Prose>
+            <p>
+              Both become scored factors once every opportunity carries a
+              consistent editorial rating for them, and the weights are
+              rebalanced in the same change. Until then they affect nothing.
+            </p>
+
             <h2>The formula</h2>
             <p>
-              Score = Σ (factor rating × factor weight), rounded to the nearest whole
-              number. Weights sum to 1, so the result is always on a 0-100 scale. The
-              same function produces the score in every list, card, and detail page on
-              the site — there is no separate editorial number.
+              Score = Σ (factor rating × factor weight), rounded to the nearest
+              whole number. The five weights sum to exactly 1, so the result is
+              always on a 0-100 scale. One definition produces the score in
+              every list, card, and detail page — there is no separate editorial
+              number, and no page can show a score that disagrees with the
+              factors beneath it.
+            </p>
+            <p>
+              Four of the five factors are rated directly on each opportunity.
+              Flexibility is derived from where the work can be done:{" "}
+              <strong>anywhere</strong> scores 100, <strong>remote</strong> 70,
+              and <strong>local</strong> 30.
             </p>
 
             <h2>What the numbers are</h2>
@@ -85,9 +131,9 @@ export default async function MethodologyPage() {
 
             <h2>Revisions</h2>
             <p>
-              The index currently covers {total} models and is revised quarterly. Every
-              opportunity page shows the date its factors were last reviewed. When a
-              factor changes, the Overall Score changes with it — we do not
+              The index currently covers {total} models. Every opportunity page
+              shows the date its factors were last reviewed. When a factor
+              changes, the Overall Score changes with it — we do not
               retrospectively adjust scores to preserve a ranking.
             </p>
 

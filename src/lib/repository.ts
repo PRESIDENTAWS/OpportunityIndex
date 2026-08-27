@@ -2,7 +2,12 @@ import seed from "@contract/opportunities.seed.json";
 import { FRANCHISE_ROWS } from "@/data/franchises";
 import { FUNDING_PROGRAM_ROWS } from "@/data/funding";
 import { BUSINESS_LISTING_ROWS } from "@/data/listings";
-import { CATEGORY_ROWS, SCORING_FACTOR_ROWS } from "@/data/reference";
+import { CATEGORY_ROWS } from "@/data/reference";
+import {
+  computeOverallScore,
+  rateAll,
+  SCORING_MODEL,
+} from "./scoring-model";
 import { RESEARCH_PIECE_ROWS } from "@/data/research";
 import type {
   BusinessListingRow,
@@ -54,31 +59,13 @@ const SEED_OPPORTUNITIES = (seed as { opportunities: SeedOpportunity[] }).opport
 /**
  * Stands in for `opportunities.overall_score`, which Postgres generates.
  *
- * This is the one place in the application permitted to evaluate the scoring
- * formula, and it exists only because there is no database yet. It uses the
- * published weights from `scoring_factors` rather than hard-coded numbers, so
- * it cannot disagree with the methodology the site renders. In Phase 2 this
- * function is deleted and the column is read from the database instead.
+ * The arithmetic lives in src/lib/scoring-model.ts, so this cannot disagree
+ * with the model the site publishes. When Supabase is connected, the column is
+ * read from the database and this mapping drops the `overall_score` line.
  */
-function generatedOverallScore(row: SeedOpportunity): number {
-  const factors: Record<string, number> = {
-    demand: row.factor_demand,
-    profit_potential: row.factor_profit_potential,
-    startup_cost: row.factor_startup_cost,
-    time_to_revenue: row.factor_time_to_revenue,
-    scalability: row.factor_scalability,
-    competition: row.factor_competition,
-  };
-  const total = SCORING_FACTOR_ROWS.reduce(
-    (sum, factor) => sum + factors[factor.key] * factor.weight,
-    0,
-  );
-  return Math.round(total);
-}
-
 const OPPORTUNITY_ROWS: OpportunityRow[] = SEED_OPPORTUNITIES.map((row) => ({
   ...row,
-  overall_score: generatedOverallScore(row),
+  overall_score: computeOverallScore(row),
 }));
 
 // -----------------------------------------------------------------------------
@@ -143,14 +130,7 @@ function toOpportunity(row: OpportunityRow): Opportunity {
     cons: row.cons,
     tools: row.tools,
     steps: [...row.steps].sort((a, b) => a.position - b.position),
-    factors: {
-      demand: row.factor_demand,
-      profit_potential: row.factor_profit_potential,
-      startup_cost: row.factor_startup_cost,
-      time_to_revenue: row.factor_time_to_revenue,
-      scalability: row.factor_scalability,
-      competition: row.factor_competition,
-    },
+    factors: rateAll(row),
     score: row.overall_score,
     reviewedAt: row.reviewed_at,
   };
@@ -282,9 +262,12 @@ export async function getCategory(slug: string): Promise<Category | undefined> {
 }
 
 export async function getScoringFactors(): Promise<ScoringFactor[]> {
-  return [...SCORING_FACTOR_ROWS]
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .map(({ key, label, description, weight }) => ({ key, label, description, weight }));
+  return SCORING_MODEL.map(({ key, label, description, weight }) => ({
+    key,
+    label,
+    description,
+    weight,
+  }));
 }
 
 // -----------------------------------------------------------------------------

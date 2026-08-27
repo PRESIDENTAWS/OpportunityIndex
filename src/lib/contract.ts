@@ -32,14 +32,18 @@ export interface CategoryRow {
   sort_order: number;
 }
 
-/** Keys of the six weighted factors, matching `scoring_factors.key`. */
+/**
+ * Keys of the weighted factors, matching `scoring_factors.key`.
+ *
+ * `scalability` and `competition` columns still hold data but are no longer
+ * scored — see src/lib/scoring-model.ts and migration 0002.
+ */
 export type ScoringFactorKey =
-  | "demand"
   | "profit_potential"
   | "startup_cost"
   | "time_to_revenue"
-  | "scalability"
-  | "competition";
+  | "demand"
+  | "flexibility";
 
 export interface ScoringFactorRow {
   key: ScoringFactorKey;

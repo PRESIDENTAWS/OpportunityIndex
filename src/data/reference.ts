@@ -1,9 +1,13 @@
-import type { CategoryRow, ScoringFactorRow } from "@/lib/contract";
+import type { CategoryRow } from "@/lib/contract";
 
 /**
- * Reference rows, transcribed from `supabase/seed.sql`. When Phase 2 connects
- * the database these are read from the `categories` and `scoring_factors`
- * tables instead — the shapes are already correct, so only the source changes.
+ * Category rows, transcribed from `supabase/seed.sql`. When Supabase is
+ * connected these are read from the `categories` table instead — the shape is
+ * already correct, so only the source changes.
+ *
+ * Scoring factors are NOT duplicated here: they live in
+ * src/lib/scoring-model.ts, which is the single definition the scorer, the
+ * breakdown, the matcher, and /methodology all read.
  */
 
 export const CATEGORY_ROWS: CategoryRow[] = [
@@ -41,55 +45,5 @@ export const CATEGORY_ROWS: CategoryRow[] = [
     description:
       "Craft, media, and content. High ceilings and long runways — these reward patience more than capital.",
     sort_order: 5,
-  },
-];
-
-/**
- * The published scoring model. Weights sum to exactly 1.000, matching both the
- * `scoring_factors` table and the generated `opportunities.overall_score`
- * expression in `supabase/schema.sql`.
- */
-export const SCORING_FACTOR_ROWS: ScoringFactorRow[] = [
-  {
-    key: "demand",
-    label: "Market Demand",
-    description: "Buyers are actively searching and spending in this market today.",
-    weight: 0.25,
-    sort_order: 1,
-  },
-  {
-    key: "profit_potential",
-    label: "Profit Potential",
-    description: "Realistic monthly take-home once the operation is established.",
-    weight: 0.22,
-    sort_order: 2,
-  },
-  {
-    key: "startup_cost",
-    label: "Low Startup Cost",
-    description: "Little capital is needed to get to a first paying customer.",
-    weight: 0.18,
-    sort_order: 3,
-  },
-  {
-    key: "time_to_revenue",
-    label: "Speed to Revenue",
-    description: "The gap between starting and being paid is short.",
-    weight: 0.15,
-    sort_order: 4,
-  },
-  {
-    key: "scalability",
-    label: "Scalability",
-    description: "Revenue can grow without hours growing at the same rate.",
-    weight: 0.12,
-    sort_order: 5,
-  },
-  {
-    key: "competition",
-    label: "Competitive Room",
-    description: "The field is not yet saturated; a newcomer can still win work.",
-    weight: 0.08,
-    sort_order: 6,
   },
 ];
