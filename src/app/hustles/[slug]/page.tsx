@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/AdSlot";
 import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Breadcrumbs, Card, SectionHeading } from "@/components/PageShell";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
@@ -229,6 +230,8 @@ export default async function OpportunityPage({
                   </li>
                 ))}
               </ul>
+              {/* Sits next to the tool links, where monetized outbound links go. */}
+              <AffiliateDisclosure className="mt-3" />
             </div>
           </section>
 

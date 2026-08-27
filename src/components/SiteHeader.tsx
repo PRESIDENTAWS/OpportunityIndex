@@ -168,7 +168,7 @@ export function SiteHeader() {
               name="q"
               type="search"
               autoFocus
-              placeholder="Search 20,000+ opportunities…"
+              placeholder="Search opportunities…"
               className="min-w-0 flex-1 rounded-[var(--radius-brand)] border px-4 py-2.5 text-sm outline-none"
               style={{ backgroundColor: "var(--bg)", borderColor: "var(--border-strong)" }}
             />

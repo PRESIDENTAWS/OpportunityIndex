@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdSlot } from "@/components/AdSlot";
 import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Card, PageHeader } from "@/components/PageShell";
 import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
 import { listFundingPrograms } from "@/lib/repository";
@@ -104,6 +105,8 @@ export default async function FundingPage() {
               </Card>
             ))}
           </ul>
+
+          <AffiliateDisclosure variant="block" className="mt-6" />
 
           <div className="mt-6">
             <AdSlot format="in-content" />
