@@ -2,8 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   buildRedirectUrl,
   checkDestination,
+  clickCookieMaxAgeSeconds,
+  DEFAULT_CLICK_WINDOW_DAYS,
   deviceType,
+  isBotUserAgent,
   isLinkRedeemable,
+  isRecordableClick,
   referrerHost,
 } from "@/lib/monetization/affiliate-url";
 
@@ -179,5 +183,74 @@ describe("deviceType", () => {
     expect(deviceType("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)")).toBe("desktop");
     expect(deviceType("Googlebot/2.1 (+http://www.google.com/bot.html)")).toBe("bot");
     expect(deviceType(null)).toBeNull();
+  });
+});
+
+describe("bot exclusion", () => {
+  const bots = [
+    "Googlebot/2.1 (+http://www.google.com/bot.html)",
+    "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)",
+    "facebookexternalhit/1.1",
+    "Twitterbot/1.0",
+    "Slackbot-LinkExpanding 1.0",
+    "WhatsApp/2.19.81 A",
+    "Mozilla/5.0 (compatible; AhrefsBot/7.0)",
+    "python-requests/2.31.0",
+    "curl/8.4.0",
+    "Go-http-client/1.1",
+    "axios/1.6.0",
+    "node-fetch/1.0",
+    "Mozilla/5.0 (X11; Linux x86_64) HeadlessChrome/120.0.0.0",
+  ];
+
+  const humans = [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+  ];
+
+  it.each(bots)("identifies %s as a bot", (ua) => {
+    expect(isBotUserAgent(ua)).toBe(true);
+    expect(isRecordableClick(ua)).toBe(false);
+  });
+
+  it.each(humans)("identifies %s as human", (ua) => {
+    expect(isBotUserAgent(ua)).toBe(false);
+    expect(isRecordableClick(ua)).toBe(true);
+  });
+
+  it("treats a missing or blank User-Agent as non-human", () => {
+    // Every real browser sends one; scripted traffic frequently does not.
+    expect(isRecordableClick(null)).toBe(false);
+    expect(isRecordableClick("")).toBe(false);
+    expect(isRecordableClick("   ")).toBe(false);
+  });
+
+  it("classifies a crawler advertising a mobile UA as a bot, not a phone", () => {
+    const ua =
+      "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36 (compatible; Googlebot/2.1)";
+    expect(deviceType(ua)).toBe("bot");
+    expect(isRecordableClick(ua)).toBe(false);
+  });
+});
+
+describe("clickCookieMaxAgeSeconds", () => {
+  it("uses the program's own cookie window when set", () => {
+    // A 30-day cookie against a 7-day program claims credit the network will
+    // not pay.
+    expect(clickCookieMaxAgeSeconds(7)).toBe(7 * 24 * 60 * 60);
+    expect(clickCookieMaxAgeSeconds(90)).toBe(90 * 24 * 60 * 60);
+  });
+
+  it("falls back to the default when the program does not state one", () => {
+    const expected = DEFAULT_CLICK_WINDOW_DAYS * 24 * 60 * 60;
+    expect(clickCookieMaxAgeSeconds(null)).toBe(expected);
+    expect(clickCookieMaxAgeSeconds(undefined)).toBe(expected);
+  });
+
+  it("ignores nonsensical windows rather than issuing a broken cookie", () => {
+    const expected = DEFAULT_CLICK_WINDOW_DAYS * 24 * 60 * 60;
+    expect(clickCookieMaxAgeSeconds(0)).toBe(expected);
+    expect(clickCookieMaxAgeSeconds(-5)).toBe(expected);
   });
 });

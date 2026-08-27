@@ -46,7 +46,10 @@ export interface AffiliateLinkRow {
 
 /** A link joined to the program it belongs to — what the redirect needs. */
 export interface ResolvedAffiliateLink extends AffiliateLinkRow {
-  program: Pick<AffiliateProgramRow, "id" | "slug" | "name" | "network" | "is_active">;
+  program: Pick<
+    AffiliateProgramRow,
+    "id" | "slug" | "name" | "network" | "is_active" | "cookie_window_days"
+  >;
 }
 
 export interface AffiliateClickInsert {
@@ -83,10 +86,20 @@ export interface NormalizedConversion {
   currency: string;
   status: ConversionStatus;
   occurredAt: string;
+  /**
+   * When the NETWORK last changed this conversion's status.
+   *
+   * Distinct from `occurredAt`, which is when the sale happened. This is what
+   * orders out-of-order webhook deliveries: an update that cannot prove it is
+   * newer than what we hold does not overwrite settled revenue.
+   */
+  statusUpdatedAt: string | null;
 }
 
 export type ConversionOutcome =
   | { result: "recorded"; id: string }
   | { result: "duplicate"; networkConversionId: string }
   | { result: "updated"; id: string }
+  /** An older or backward update that was refused. Not an error. */
+  | { result: "ignored"; reason: "stale" | "invalid-transition" }
   | { result: "rejected"; reason: string };

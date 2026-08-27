@@ -1,4 +1,5 @@
 import Script from "next/script";
+import { safeGaMeasurementId } from "@/lib/analytics/constants";
 
 /**
  * Browser-side GA4 configuration.
@@ -8,7 +9,10 @@ import Script from "next/script";
  * `GA_API_SECRET` is server-only and is not referenced in this file.
  */
 export function GoogleAnalytics() {
-  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  // Validated before interpolation: this value is written into an inline
+  // <script>, so a malformed or hostile ID would be script injection. A bad
+  // value is refused and logged rather than escaped.
+  const measurementId = safeGaMeasurementId();
   if (!measurementId) return null;
 
   return (

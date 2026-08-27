@@ -20,9 +20,21 @@ import type { NormalizedConversion } from "../types";
  *   - how refunds and reversals are represented, so `reversed` is recorded
  *     rather than a second `approved` row
  *
- * `isConfigured()` returns false until `REFERSION_WEBHOOK_SECRET` is set, so
- * the route answers 501 and no conversion is recorded.
+ * `IMPLEMENTATION_VERIFIED` below is the single gate. While it is false this
+ * adapter reports itself unconfigured **regardless of any secret set in the
+ * environment**, and the route answers 501. Setting
+ * `REFERSION_WEBHOOK_SECRET` does not and must not enable it.
  */
+
+/**
+ * Flips to true only when the payload specification and signature scheme below
+ * have been verified against Refersion's official documentation with real
+ * credentials in hand, and `parse()` has been implemented.
+ *
+ * While false the adapter reports itself unconfigured no matter what secrets
+ * are present, and the ingest route answers 501.
+ */
+const IMPLEMENTATION_VERIFIED = false;
 
 const SIGNATURE_HEADER = "x-refersion-signature";
 
@@ -30,6 +42,12 @@ export const refersionAdapter: ConversionAdapter = {
   network: "refersion",
 
   isConfigured() {
+    // Hard-disabled. A secret alone must NOT activate this adapter: parse()
+    // always throws, so a "configured" adapter would accept a signed request
+    // and then fail at 422 having already been treated as live. Flipping this
+    // to a credential check is the LAST step of implementing the adapter, not
+    // the first — see IMPLEMENTATION_VERIFIED above.
+    if (!IMPLEMENTATION_VERIFIED) return false;
     return Boolean(process.env.REFERSION_WEBHOOK_SECRET);
   },
 

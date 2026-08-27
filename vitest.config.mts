@@ -10,6 +10,8 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@contract": fileURLToPath(new URL("./data", import.meta.url)),
+      // See tests/stubs/server-only.ts.
+      "server-only": fileURLToPath(new URL("./tests/stubs/server-only.ts", import.meta.url)),
     },
   },
 });

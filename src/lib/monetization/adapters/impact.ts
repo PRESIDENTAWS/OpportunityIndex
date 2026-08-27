@@ -23,10 +23,23 @@ import type { NormalizedConversion } from "../types";
  *   - whether the signed payload includes a timestamp or nonce
  *   - the field names on the Action payload
  *
- * Until then `isConfigured()` returns false, the route answers 501, and no
- * conversion is ever recorded from this network. That is the intended state:
- * fabricating an integration would produce revenue numbers nobody can trust.
+ * `IMPLEMENTATION_VERIFIED` below is the single gate. While it is false this
+ * adapter reports itself unconfigured **regardless of any secret set in the
+ * environment**, the route answers 501, and no conversion is ever recorded from
+ * this network. Setting `IMPACT_WEBHOOK_SECRET` does not and must not enable
+ * it: fabricating an integration would produce revenue numbers nobody can
+ * trust.
  */
+
+/**
+ * Flips to true only when the payload specification and signature scheme below
+ * have been verified against Impact's official documentation with real
+ * credentials in hand, and `parse()` has been implemented.
+ *
+ * While false the adapter reports itself unconfigured no matter what secrets
+ * are present, and the ingest route answers 501.
+ */
+const IMPLEMENTATION_VERIFIED = false;
 
 const SIGNATURE_HEADER = "x-impact-signature";
 
@@ -34,6 +47,12 @@ export const impactAdapter: ConversionAdapter = {
   network: "impact",
 
   isConfigured() {
+    // Hard-disabled. A secret alone must NOT activate this adapter: parse()
+    // always throws, so a "configured" adapter would accept a signed request
+    // and then fail at 422 having already been treated as live. Flipping this
+    // to a credential check is the LAST step of implementing the adapter, not
+    // the first — see IMPLEMENTATION_VERIFIED above.
+    if (!IMPLEMENTATION_VERIFIED) return false;
     return Boolean(process.env.IMPACT_WEBHOOK_SECRET);
   },
 

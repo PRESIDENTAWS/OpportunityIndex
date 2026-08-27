@@ -5,9 +5,11 @@ import type { ConversionAdapter } from "./types";
 /**
  * Registry of conversion adapters.
  *
- * Both entries are interface-only stubs today. Neither can record a conversion
- * until real credentials and an official payload specification are supplied —
- * see the file-level notes in each adapter.
+ * Both entries are interface-only stubs today, hard-disabled by an
+ * `IMPLEMENTATION_VERIFIED` flag inside each file. Neither reports itself
+ * configured even when its webhook secret is present, so neither can record a
+ * conversion until it is implemented against the network's official payload
+ * specification — see the file-level notes in each adapter.
  */
 const ADAPTERS: ConversionAdapter[] = [impactAdapter, refersionAdapter];
 

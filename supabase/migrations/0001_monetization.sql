@@ -208,8 +208,14 @@ create table affiliate_conversions (
   occurred_at           timestamptz       not null,
   status_updated_at     timestamptz       not null default now(),
 
-  -- The verified payload as received, for audit and re-processing.
-  raw_payload           jsonb,
+  -- Audit trail WITHOUT customer PII.
+  --
+  -- Affiliate webhooks routinely carry customer emails, names, addresses, and
+  -- IPs. None of that is needed to reconcile a commission, so only a redacted
+  -- subset is stored. `payload_sha256` digests the original bytes, which is
+  -- enough to prove what we received without retaining it.
+  payload_redacted      jsonb,
+  payload_sha256        char(64),
 
   created_at            timestamptz       not null default now(),
   updated_at            timestamptz       not null default now(),
@@ -227,6 +233,10 @@ comment on column affiliate_conversions.commission_minor is
   'What we actually earn, in minor units. This is the revenue figure.';
 comment on constraint affiliate_conversions_network_id_unique on affiliate_conversions is
   'Idempotency guard: replayed webhooks and re-imported reports cannot double-count.';
+comment on column affiliate_conversions.payload_redacted is
+  'Non-identifying subset of the verified payload. Customer PII is dropped before storage.';
+comment on column affiliate_conversions.payload_sha256 is
+  'SHA-256 of the raw payload bytes as received. Proves what arrived without retaining it.';
 
 create trigger affiliate_conversions_set_updated_at
   before update on affiliate_conversions

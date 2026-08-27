@@ -60,3 +60,34 @@ export const ANALYTICS_EVENTS = {
 
 export type AnalyticsEventName =
   (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
+
+/**
+ * A GA4 measurement ID: `G-` followed by an uppercase alphanumeric token.
+ *
+ * The ID is interpolated into an inline `<script>`, so it is attacker-controlled
+ * input the moment an environment variable is mis-set or supplied by a
+ * deployment platform. Anything not matching this pattern is refused rather
+ * than escaped — a measurement ID has no legitimate reason to contain a quote,
+ * angle bracket, or newline.
+ */
+const GA_MEASUREMENT_ID_PATTERN = /^G-[A-Z0-9]{4,20}$/;
+
+export function isValidGaMeasurementId(value: string | undefined | null): boolean {
+  if (!value) return false;
+  return GA_MEASUREMENT_ID_PATTERN.test(value);
+}
+
+/** Returns the configured measurement ID only when it is well-formed. */
+export function safeGaMeasurementId(): string | null {
+  const value = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  if (!isValidGaMeasurementId(value)) {
+    if (value) {
+      console.error(
+        "[ga4] NEXT_PUBLIC_GA_MEASUREMENT_ID is malformed and was ignored. " +
+          "Expected the form G-XXXXXXXXXX.",
+      );
+    }
+    return null;
+  }
+  return value!;
+}

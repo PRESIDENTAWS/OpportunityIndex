@@ -27,12 +27,26 @@ export function trackEvent(
   window.gtag("event", name, params);
 }
 
+/**
+ * Records an outbound affiliate click in GA4.
+ *
+ * **This event is not joined to the database click record.** The `click_id` is
+ * generated server-side inside the redirect and is stored in an httpOnly
+ * cookie, so the browser never sees it and it is not transmitted here. GA4
+ * therefore measures click *volume* by link, program, and placement; the
+ * authoritative per-click attribution record is the `affiliate_clicks` row.
+ *
+ * Joining the two would require the redirect to hand the click id back to the
+ * browser, which would make it forgeable. Do not describe these as joined.
+ */
 export function trackAffiliateClick(params: {
+  linkSlug: string;
   program: string;
   opportunity?: string | null;
   placement?: string | null;
 }): void {
   trackEvent(ANALYTICS_EVENTS.affiliateClick, {
+    link_slug: params.linkSlug,
     program: params.program,
     opportunity: params.opportunity ?? undefined,
     placement: params.placement ?? undefined,

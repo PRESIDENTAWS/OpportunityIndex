@@ -8,11 +8,35 @@
 
 import type { ResolvedAffiliateLink } from "./types";
 
-/** The attribution cookie holds the click UUID and nothing else. */
+/**
+ * The attribution cookie holds the click UUID and nothing else.
+ *
+ * It is httpOnly: no client-side code reads it. The authoritative attribution
+ * record is the `affiliate_clicks` row, not this cookie — the cookie exists so
+ * a later conversion can be tied back to a click, and a value the browser can
+ * read is a value the browser can forge.
+ */
 export const CLICK_COOKIE_NAME = "oi_click";
 
-/** Matches the affiliate network's typical 30-day window. */
-export const CLICK_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+/** Used when a program does not state its own cookie window. */
+export const DEFAULT_CLICK_WINDOW_DAYS = 30;
+
+/**
+ * Cookie lifetime for a click, in seconds.
+ *
+ * Prefers the program's own `cookie_window_days` so attribution matches the
+ * window the network actually honours; a 30-day cookie against a 7-day program
+ * claims credit the network will not pay.
+ */
+export function clickCookieMaxAgeSeconds(
+  cookieWindowDays?: number | null,
+): number {
+  const days =
+    typeof cookieWindowDays === "number" && cookieWindowDays > 0
+      ? cookieWindowDays
+      : DEFAULT_CLICK_WINDOW_DAYS;
+  return days * 24 * 60 * 60;
+}
 
 export type DestinationRejection =
   | "not-absolute"
@@ -109,6 +133,38 @@ export function referrerHost(referrer: string | null): string | null {
 }
 
 /**
+ * Known non-human User-Agents.
+ *
+ * Checked before the device buckets, because several crawlers advertise a
+ * mobile UA and would otherwise be filed as phones.
+ */
+const BOT_PATTERN =
+  /bot\b|bots\b|crawler|crawling|spider|slurp|bingpreview|facebookexternalhit|whatsapp|telegrambot|discordbot|slackbot|twitterbot|linkedinbot|embedly|quora link preview|pinterest|redditbot|applebot|duckduckbot|yandex|baiduspider|semrush|ahrefs|mj12bot|dotbot|petalbot|headlesschrome|phantomjs|puppeteer|playwright|python-requests|curl\/|wget\/|go-http-client|okhttp|axios\/|node-fetch/i;
+
+/**
+ * True when the User-Agent is a known bot, or absent entirely.
+ *
+ * A missing User-Agent is treated as non-human: every real browser sends one,
+ * and scripted traffic frequently does not.
+ */
+export function isBotUserAgent(userAgent: string | null): boolean {
+  if (!userAgent || userAgent.trim() === "") return true;
+  return BOT_PATTERN.test(userAgent);
+}
+
+/**
+ * Whether a click should be written to `affiliate_clicks`.
+ *
+ * Bot traffic still gets redirected — link previews and crawlers should resolve
+ * normally — but it is not recorded, because a click log padded with crawler
+ * hits inflates click-through rates and makes conversion rates look worse than
+ * they are.
+ */
+export function isRecordableClick(userAgent: string | null): boolean {
+  return !isBotUserAgent(userAgent);
+}
+
+/**
  * Coarse device bucket from a User-Agent.
  *
  * Intentionally crude: this is for reporting shape, not fingerprinting, and a
@@ -116,9 +172,9 @@ export function referrerHost(referrer: string | null): string | null {
  */
 export function deviceType(userAgent: string | null): string | null {
   if (!userAgent) return null;
+  if (isBotUserAgent(userAgent)) return "bot";
   const ua = userAgent.toLowerCase();
   if (/ipad|tablet|playbook|silk/.test(ua)) return "tablet";
   if (/mobi|iphone|android.+mobile|phone/.test(ua)) return "mobile";
-  if (/bot|crawler|spider|crawling/.test(ua)) return "bot";
   return "desktop";
 }

@@ -33,7 +33,7 @@ export function AffiliateLink({
       rel="sponsored noopener noreferrer"
       target="_blank"
       className={className}
-      onClick={() => trackAffiliateClick({ program, opportunity, placement })}
+      onClick={() => trackAffiliateClick({ linkSlug, program, opportunity, placement })}
     >
       {children}
     </a>

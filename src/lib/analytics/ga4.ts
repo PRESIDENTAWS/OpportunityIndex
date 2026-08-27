@@ -3,6 +3,7 @@ import "server-only";
 import {
   GA4_COLLECT_ENDPOINT,
   GA4_DEBUG_ENDPOINT,
+  safeGaMeasurementId,
   type AnalyticsEventName,
 } from "./constants";
 
@@ -47,7 +48,9 @@ export interface SendGa4Options {
 }
 
 function credentials(): { measurementId: string; apiSecret: string } | null {
-  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  // Validated, not merely present: a malformed ID is refused here too, so a
+  // bad value cannot reach the network layer either.
+  const measurementId = safeGaMeasurementId();
   const apiSecret = process.env.GA_API_SECRET;
   if (!measurementId || !apiSecret) return null;
   return { measurementId, apiSecret };
@@ -88,6 +91,7 @@ export async function validateEvent(
   try {
     const response = await fetch(url, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(buildPayload(options)),
     });
     const body = (await response.json()) as {
@@ -106,8 +110,14 @@ export async function validateEvent(
  * Returns false when unconfigured or when the request fails. Analytics must
  * never break a user-facing request, so callers ignore the result on hot paths.
  *
- * Do not use this to report conversions that have not actually been confirmed
- * by an affiliate network — see `src/lib/monetization/conversions.ts`.
+ * ## Conversion events
+ *
+ * Do NOT call this to report a conversion. No caller in this codebase sends a
+ * server-side conversion event, and none may until a real affiliate conversion
+ * has been verified through a working network adapter. Both adapters are
+ * hard-disabled, so no verified conversion exists yet — a purchase or revenue
+ * event emitted now would be fabricated data in a reporting system people make
+ * spending decisions from.
  */
 export async function sendGa4Event(options: SendGa4Options): Promise<boolean> {
   const creds = credentials();
@@ -130,6 +140,7 @@ export async function sendGa4Event(options: SendGa4Options): Promise<boolean> {
   try {
     const response = await fetch(url, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(buildPayload(options)),
     });
     // A 2xx here is not proof of acceptance — that is what validateEvent is for.

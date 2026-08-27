@@ -28,7 +28,7 @@ export async function findAffiliateLink(
     .select(
       `id, program_id, slug, label, destination_url, opportunity_slug,
        category_slug, placement, is_active, expires_at,
-       program:affiliate_programs!inner ( id, slug, name, network, is_active )`,
+       program:affiliate_programs!inner ( id, slug, name, network, is_active, cookie_window_days )`,
     )
     .eq("slug", slug)
     .maybeSingle();

@@ -16,7 +16,7 @@ export function NewsletterCard({ className = "" }: { className?: string }) {
           </p>
         </div>
       </div>
-      <NewsletterForm layout="stacked" className="mt-4" />
+      <NewsletterForm layout="stacked" source="sidebar" className="mt-4" />
     </section>
   );
 }
