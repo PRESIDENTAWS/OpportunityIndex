@@ -139,13 +139,11 @@ export default async function MethodologyPage() {
 
             <h2>Advertising and independence</h2>
             <p>
-              Placements marked <em>Sponsored</em> or <em>Featured Sponsor</em> are paid.
               No sponsor can buy a score, a rank, or a place in the index, and no
-              scoring factor accounts for whether a company advertises with us. See{" "}
-              <Link href="/advertise" className="underline underline-offset-4">
-                Advertise
-              </Link>{" "}
-              for how placements work.
+              scoring factor accounts for whether a company advertises with us —
+              the formula above is the whole model, and none of its inputs
+              reference a commercial relationship. Any paid placement we run is
+              labelled as such where it appears.
             </p>
           </Prose>
         </div>

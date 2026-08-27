@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AdSlot } from "./AdSlot";
 import { Icon } from "./Icon";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
@@ -18,11 +17,9 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   function closeMenus() {
     setMenuOpen(false);
-    setOpenDropdown(null);
   }
 
   useEffect(() => {
@@ -37,26 +34,11 @@ export function SiteHeader() {
       className="sticky top-0 z-50 border-b"
       style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
     >
-      {/* Announcement bar */}
-      <div style={{ backgroundColor: "#0d1117", color: "#f5f7fa" }}>
-        <div className="container-oi flex items-center justify-center gap-2 py-2 text-center text-xs sm:text-sm">
-          <Icon name="rocket" size={15} className="hidden shrink-0 sm:block" />
-          <span>New: 2026 Small Business Trend Report is live.</span>
-          <Link
-            href="/research/2026-small-business-trend-report"
-            className="inline-flex shrink-0 items-center gap-1 font-semibold underline underline-offset-4"
-          >
-            View Report
-            <Icon name="arrowRight" size={13} />
-          </Link>
-        </div>
-      </div>
 
       {/* Masthead: logo · ad slot · utilities */}
       <div className="container-oi flex items-center justify-between gap-6 py-3 lg:py-4">
         <Logo variant="tagline" size={36} idPrefix="header" />
 
-        <AdSlot format="leaderboard" className="hidden max-w-[730px] flex-1 xl:flex" />
 
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle className="hidden sm:flex" />
@@ -102,12 +84,7 @@ export function SiteHeader() {
             {PRIMARY_NAV.map((item) => {
               const active = isActive(pathname, item.href);
               return (
-                <li
-                  key={item.label}
-                  className="relative"
-                  onMouseEnter={() => setOpenDropdown(item.children ? item.label : null)}
-                  onMouseLeave={() => setOpenDropdown(null)}
-                >
+                <li key={item.label} className="relative">
                   <Link
                     href={item.href}
                     className="flex items-center gap-1 border-b-2 px-4 py-3.5 text-[0.78rem] font-medium tracking-eyebrow uppercase transition-colors"
@@ -117,31 +94,8 @@ export function SiteHeader() {
                     }}
                   >
                     {item.label}
-                    {item.children && <Icon name="chevronDown" size={13} />}
-                  </Link>
+                                      </Link>
 
-                  {item.children && openDropdown === item.label && (
-                    <div
-                      className="absolute top-full left-0 z-50 w-72 rounded-b-[var(--radius-brand)] border border-t-0 py-2 shadow-card"
-                      style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
-                    >
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          onClick={closeMenus}
-                          className="block px-4 py-2.5 transition-colors hover:bg-[var(--bg-subtle)]"
-                        >
-                          <span className="block text-sm font-medium">{child.label}</span>
-                          {child.description && (
-                            <span className="mt-0.5 block text-xs" style={{ color: "var(--fg-faint)" }}>
-                              {child.description}
-                            </span>
-                          )}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
                 </li>
               );
             })}
@@ -202,22 +156,6 @@ export function SiteHeader() {
                     {item.label}
                     <Icon name="chevronRight" size={16} />
                   </Link>
-                  {item.children && (
-                    <ul className="pb-2 pl-3">
-                      {item.children.slice(1).map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            onClick={closeMenus}
-                            className="block py-2 text-sm"
-                            style={{ color: "var(--fg-muted)" }}
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </li>
               ))}
             </ul>

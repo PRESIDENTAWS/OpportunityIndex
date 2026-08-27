@@ -3,13 +3,7 @@ import Link from "next/link";
 import { HorizonCard } from "@/components/HorizonCard";
 import { Card, PageHeader } from "@/components/PageShell";
 import { Prose } from "@/components/Prose";
-import {
-  countOpportunities,
-  listBusinessListings,
-  listFranchises,
-  listFundingPrograms,
-  listResearchPieces,
-} from "@/lib/repository";
+import { countOpportunities, listFundingPrograms } from "@/lib/repository";
 
 export const metadata: Metadata = {
   title: "About",
@@ -19,20 +13,15 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   // Counts are derived from the data, never hard-coded — see PRODUCT_SPEC.md.
-  const [opportunities, listings, franchises, funding, research] = await Promise.all([
+  const [opportunities, funding] = await Promise.all([
     countOpportunities(),
-    listBusinessListings(),
-    listFranchises(),
     listFundingPrograms(),
-    listResearchPieces(),
   ]);
 
   const stats = [
-    ["Business models", opportunities],
-    ["Businesses for sale", listings.length],
-    ["Franchise concepts", franchises.length],
-    ["Funding routes", funding.length],
-    ["Research pieces", research.length],
+    ["Opportunities scored", opportunities],
+    ["Scoring factors", 5],
+    ["Funding routes compared", funding.length],
   ] as const;
 
   return (
@@ -44,7 +33,7 @@ export default async function AboutPage() {
       />
 
       <div className="container-oi py-8">
-        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {stats.map(([label, value]) => (
             <Card as="li" key={label} className="p-4">
               <p className="text-2xl font-bold tabular-nums">{value}</p>

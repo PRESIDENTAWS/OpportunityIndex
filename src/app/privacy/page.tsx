@@ -36,8 +36,8 @@ export default function PrivacyPage() {
           <h2>What we do not do</h2>
           <p>
             We do not sell personal information, and we do not share your email address
-            with advertisers or sponsors. Calculators on this site run entirely in your
-            browser — the figures you enter are never transmitted to us.
+            with advertisers or sponsors. The matching form works from values in the page
+            URL and is not stored against you.
           </p>
 
           <h2>Advertising</h2>

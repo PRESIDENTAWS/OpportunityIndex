@@ -1,31 +1,21 @@
 import seed from "@contract/opportunities.seed.json";
-import { FRANCHISE_ROWS } from "@/data/franchises";
 import { FUNDING_PROGRAM_ROWS } from "@/data/funding";
-import { BUSINESS_LISTING_ROWS } from "@/data/listings";
 import { CATEGORY_ROWS } from "@/data/reference";
 import {
   computeOverallScore,
   rateAll,
   SCORING_MODEL,
 } from "./scoring-model";
-import { RESEARCH_PIECE_ROWS } from "@/data/research";
 import type {
-  BusinessListingRow,
   CategorySlug,
   Flexibility,
-  FranchiseRow,
   FundingProgramRow,
   OpportunityRow,
-  ResearchKind,
-  ResearchPieceRow,
 } from "./contract";
 import type {
-  BusinessListing,
   Category,
-  Franchise,
   FundingProgram,
   Opportunity,
-  ResearchPiece,
   ScoringFactor,
 } from "./types";
 
@@ -79,18 +69,8 @@ const FLEXIBILITY_LABELS: Record<Flexibility, string> = {
   local: "Local",
 };
 
-const RESEARCH_KIND_LABELS: Record<ResearchKind, string> = {
-  report: "Report",
-  guide: "Guide",
-  data_study: "Data Study",
-};
-
 export function flexibilityLabel(value: Flexibility): string {
   return FLEXIBILITY_LABELS[value];
-}
-
-export function researchKindLabel(value: ResearchKind): string {
-  return RESEARCH_KIND_LABELS[value];
 }
 
 // -----------------------------------------------------------------------------
@@ -136,47 +116,6 @@ function toOpportunity(row: OpportunityRow): Opportunity {
   };
 }
 
-function toBusinessListing(row: BusinessListingRow): BusinessListing {
-  return {
-    slug: row.slug,
-    name: row.name,
-    industry: row.industry,
-    location: row.location,
-    askingPrice: row.asking_price,
-    annualRevenue: row.annual_revenue,
-    cashFlow: row.cash_flow,
-    establishedYear: row.established_year,
-    employeeCount: row.employee_count,
-    ownerFinancing: row.owner_financing,
-    reasonForSale: row.reason_for_sale,
-    highlights: row.highlights,
-    status: row.status,
-    reviewedAt: row.reviewed_at,
-    cashFlowMultiple: row.asking_price / row.cash_flow,
-  };
-}
-
-function toFranchise(row: FranchiseRow): Franchise {
-  return {
-    slug: row.slug,
-    name: row.name,
-    industry: row.industry,
-    franchiseFee: row.franchise_fee,
-    totalInvestment: {
-      min: row.total_investment_min,
-      max: row.total_investment_max,
-      openEnded: false,
-    },
-    royalty: row.royalty,
-    liquidCapitalRequired: row.liquid_capital_required,
-    unitCount: row.unit_count,
-    foundedYear: row.founded_year,
-    summary: row.summary,
-    support: row.support,
-    reviewedAt: row.reviewed_at,
-  };
-}
-
 function toFundingProgram(row: FundingProgramRow): FundingProgram {
   return {
     slug: row.slug,
@@ -191,20 +130,6 @@ function toFundingProgram(row: FundingProgramRow): FundingProgram {
     summary: row.summary,
     requirements: row.requirements,
     reviewedAt: row.reviewed_at,
-  };
-}
-
-function toResearchPiece(row: ResearchPieceRow): ResearchPiece {
-  return {
-    slug: row.slug,
-    title: row.title,
-    kind: row.kind,
-    kindLabel: RESEARCH_KIND_LABELS[row.kind],
-    excerpt: row.excerpt,
-    body: row.body,
-    takeaways: row.takeaways,
-    readingTimeMinutes: row.reading_time_minutes,
-    publishedAt: row.published_at,
   };
 }
 
@@ -238,10 +163,38 @@ export const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 
 export const FLEXIBILITY_VALUES: Flexibility[] = ["anywhere", "remote", "local"];
 
+export interface Band {
+  id: string;
+  label: string;
+  min: number;
+  max: number;
+}
+
+/**
+ * Income-potential bands, matched against each opportunity's realistic monthly
+ * ceiling. "Up to $2,000" means the ceiling lands in that band, not that the
+ * opportunity can never exceed it.
+ */
+export const INCOME_BANDS: Band[] = [
+  { id: "to-2000", label: "Up to $2,000 / mo", min: 0, max: 2_000 },
+  { id: "2000-5000", label: "$2,000 – $5,000 / mo", min: 2_000, max: 5_000 },
+  { id: "5000-10000", label: "$5,000 – $10,000 / mo", min: 5_000, max: 10_000 },
+  { id: "10000-plus", label: "$10,000+ / mo", min: 10_000, max: Infinity },
+];
+
+/** Time bands, matched against the minimum hours an opportunity needs. */
+export const TIME_BANDS: Band[] = [
+  { id: "to-10", label: "Under 10 hrs / week", min: 0, max: 10 },
+  { id: "10-20", label: "10 – 20 hrs / week", min: 10, max: 20 },
+  { id: "20-plus", label: "20+ hrs / week", min: 20, max: Infinity },
+];
+
 export interface OpportunityFilters {
   search?: string;
   categories?: CategorySlug[];
   costBands?: string[];
+  incomeBands?: string[];
+  timeBands?: string[];
   flexibility?: Flexibility[];
   sort?: SortKey;
 }
@@ -293,6 +246,24 @@ function matchesCostBand(o: Opportunity, bandIds: string[]): boolean {
   });
 }
 
+/** An opportunity's income ceiling falls inside one of the selected bands. */
+function matchesIncomeBand(o: Opportunity, bandIds: string[]): boolean {
+  return bandIds.some((id) => {
+    const band = INCOME_BANDS.find((b) => b.id === id);
+    if (!band) return false;
+    return o.monthlyProfit.max >= band.min && o.monthlyProfit.max < band.max;
+  });
+}
+
+/** The hours an opportunity needs at minimum fall inside a selected band. */
+function matchesTimeBand(o: Opportunity, bandIds: string[]): boolean {
+  return bandIds.some((id) => {
+    const band = TIME_BANDS.find((b) => b.id === id);
+    if (!band) return false;
+    return o.hoursPerWeek.min >= band.min && o.hoursPerWeek.min < band.max;
+  });
+}
+
 function sortOpportunities(list: Opportunity[], sort: SortKey): Opportunity[] {
   const sorted = [...list];
   switch (sort) {
@@ -322,6 +293,12 @@ export async function listOpportunities(
   }
   if (filters.costBands?.length) {
     results = results.filter((o) => matchesCostBand(o, filters.costBands!));
+  }
+  if (filters.incomeBands?.length) {
+    results = results.filter((o) => matchesIncomeBand(o, filters.incomeBands!));
+  }
+  if (filters.timeBands?.length) {
+    results = results.filter((o) => matchesTimeBand(o, filters.timeBands!));
   }
   if (filters.flexibility?.length) {
     results = results.filter((o) => filters.flexibility!.includes(o.flexibility));
@@ -373,42 +350,6 @@ export async function getCategoryCounts(): Promise<
 }
 
 // -----------------------------------------------------------------------------
-// Business listing queries
-// -----------------------------------------------------------------------------
-
-export async function listBusinessListings(): Promise<BusinessListing[]> {
-  return BUSINESS_LISTING_ROWS.map(toBusinessListing);
-}
-
-export async function getBusinessListing(
-  slug: string,
-): Promise<BusinessListing | undefined> {
-  const row = BUSINESS_LISTING_ROWS.find((l) => l.slug === slug);
-  return row ? toBusinessListing(row) : undefined;
-}
-
-export async function getBusinessListingSlugs(): Promise<string[]> {
-  return BUSINESS_LISTING_ROWS.map((l) => l.slug);
-}
-
-// -----------------------------------------------------------------------------
-// Franchise queries
-// -----------------------------------------------------------------------------
-
-export async function listFranchises(): Promise<Franchise[]> {
-  return FRANCHISE_ROWS.map(toFranchise);
-}
-
-export async function getFranchise(slug: string): Promise<Franchise | undefined> {
-  const row = FRANCHISE_ROWS.find((f) => f.slug === slug);
-  return row ? toFranchise(row) : undefined;
-}
-
-export async function getFranchiseSlugs(): Promise<string[]> {
-  return FRANCHISE_ROWS.map((f) => f.slug);
-}
-
-// -----------------------------------------------------------------------------
 // Funding queries
 // -----------------------------------------------------------------------------
 
@@ -427,26 +368,3 @@ export async function getFundingProgramSlugs(): Promise<string[]> {
   return FUNDING_PROGRAM_ROWS.map((f) => f.slug);
 }
 
-// -----------------------------------------------------------------------------
-// Research queries
-// -----------------------------------------------------------------------------
-
-export const RESEARCH_KINDS: ResearchKind[] = ["report", "guide", "data_study"];
-
-export async function listResearchPieces(kind?: ResearchKind): Promise<ResearchPiece[]> {
-  const rows = kind
-    ? RESEARCH_PIECE_ROWS.filter((r) => r.kind === kind)
-    : RESEARCH_PIECE_ROWS;
-  return [...rows]
-    .sort((a, b) => b.published_at.localeCompare(a.published_at))
-    .map(toResearchPiece);
-}
-
-export async function getResearchPiece(slug: string): Promise<ResearchPiece | undefined> {
-  const row = RESEARCH_PIECE_ROWS.find((r) => r.slug === slug);
-  return row ? toResearchPiece(row) : undefined;
-}
-
-export async function getResearchPieceSlugs(): Promise<string[]> {
-  return RESEARCH_PIECE_ROWS.map((r) => r.slug);
-}

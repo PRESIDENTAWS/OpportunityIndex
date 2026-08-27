@@ -11,9 +11,9 @@ const SOCIAL = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 pb-24 lg:pb-0" style={{ backgroundColor: "#0d1117", color: "#f5f7fa" }}>
+    <footer className="mt-16" style={{ backgroundColor: "#0d1117", color: "#f5f7fa" }}>
       <div className="container-oi py-12 lg:py-14">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))_minmax(0,0.9fr)]">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
           <div>
             <Logo variant="tagline" size={34} idPrefix="footer" />
             <p className="mt-4 max-w-xs text-sm" style={{ color: "#9aa4b4" }}>
@@ -43,34 +43,6 @@ export function SiteFooter() {
             </div>
           ))}
 
-          <div>
-            <h2 className="text-[0.65rem] font-semibold tracking-eyebrow uppercase" style={{ color: "#6b7585" }}>
-              Connect
-            </h2>
-            <div className="mt-4 flex gap-2">
-              {SOCIAL.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  rel="noreferrer noopener"
-                  target="_blank"
-                  className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-brand)] border text-sm transition-colors hover:bg-white/10"
-                  style={{ borderColor: "#232b38", color: "#c3cbd8" }}
-                >
-                  {social.glyph}
-                </a>
-              ))}
-            </div>
-            <Link
-              href="/advertise"
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium"
-              style={{ color: "#60a5fa" }}
-            >
-              Advertise with us
-              <Icon name="arrowRight" size={14} />
-            </Link>
-          </div>
         </div>
 
         <div

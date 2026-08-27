@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdSlot } from "@/components/AdSlot";
 import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { Breadcrumbs, Card } from "@/components/PageShell";
-import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
 import { getFundingProgram, getFundingProgramSlugs } from "@/lib/repository";
 import { money } from "@/lib/format";
 
@@ -93,9 +91,6 @@ export default async function FundingProgramPage({
             </ul>
           </section>
 
-          <div className="my-8">
-            <AdSlot format="in-content" />
-          </div>
 
           <Card className="p-5">
             <h2 className="font-bold">Not financial advice</h2>
@@ -116,8 +111,6 @@ export default async function FundingProgramPage({
         </article>
 
         <aside className="space-y-4">
-          <SponsorCard sponsor={SPONSORS.capitalRecon} />
-          <AdSlot format="half-page" className="hidden lg:flex" />
           <NewsletterCard />
         </aside>
       </div>

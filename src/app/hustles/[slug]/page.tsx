@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdSlot } from "@/components/AdSlot";
 import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
+import { CapitalReconCta } from "@/components/CapitalReconCta";
 import { Breadcrumbs, Card, SectionHeading } from "@/components/PageShell";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdown } from "@/components/ScoreBreakdown";
-import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
 import { formatDate, hoursRange, moneyRange } from "@/lib/format";
 import {
   getOpportunity,
@@ -73,7 +72,7 @@ export default async function OpportunityPage({
             trail={[
               { label: "Home", href: "/" },
               { label: "Hustles", href: "/hustles" },
-              { label: opportunity.categoryLabel, href: `/businesses/${opportunity.categorySlug}` },
+              { label: opportunity.categoryLabel, href: `/hustles?category=${opportunity.categorySlug}` },
               { label: opportunity.name },
             ]}
           />
@@ -144,9 +143,6 @@ export default async function OpportunityPage({
             </p>
           </section>
 
-          <div className="my-8">
-            <AdSlot format="in-content" />
-          </div>
 
           <section className="grid gap-6 sm:grid-cols-2">
             <Card className="p-5">
@@ -236,7 +232,7 @@ export default async function OpportunityPage({
           </section>
 
           <section className="mt-12">
-            <SectionHeading title="Compare With" action={{ label: "Compare tool", href: "/tools/compare" }} />
+            <SectionHeading title="Similar Opportunities" action={{ label: "Browse all", href: "/hustles" }} />
             <ul className="grid gap-3 sm:grid-cols-3">
               {related.map((other) => (
                 <Card as="li" key={other.slug} className="p-4">
@@ -272,8 +268,7 @@ export default async function OpportunityPage({
             </Link>
           </Card>
 
-          <SponsorCard sponsor={SPONSORS.capitalRecon} />
-          <AdSlot format="half-page" className="hidden lg:flex" />
+          <CapitalReconCta />
           <NewsletterCard />
         </aside>
       </div>

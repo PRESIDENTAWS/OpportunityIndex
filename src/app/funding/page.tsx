@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdSlot } from "@/components/AdSlot";
 import { Icon } from "@/components/Icon";
 import { NewsletterCard } from "@/components/NewsletterCard";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Card, PageHeader } from "@/components/PageShell";
-import { SponsorCard, SPONSORS } from "@/components/SponsorCard";
 import { listFundingPrograms } from "@/lib/repository";
 import { moneyCompact } from "@/lib/format";
 
@@ -108,13 +106,9 @@ export default async function FundingPage() {
 
           <AffiliateDisclosure variant="block" className="mt-6" />
 
-          <div className="mt-6">
-            <AdSlot format="in-content" />
-          </div>
         </div>
 
         <aside className="space-y-4">
-          <SponsorCard sponsor={SPONSORS.capitalRecon} />
           <Card className="p-5">
             <h2 className="text-sm font-bold">Match the instrument to the need</h2>
             <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>
@@ -123,7 +117,6 @@ export default async function FundingPage() {
               paying 20% on a five-year asset.
             </p>
           </Card>
-          <AdSlot format="half-page" className="hidden lg:flex" />
           <NewsletterCard />
         </aside>
       </div>

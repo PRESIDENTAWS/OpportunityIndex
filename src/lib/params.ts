@@ -1,7 +1,9 @@
 import {
   COST_BANDS,
   FLEXIBILITY_VALUES,
+  INCOME_BANDS,
   SORT_OPTIONS,
+  TIME_BANDS,
   type OpportunityFilters,
   type SortKey,
 } from "./repository";
@@ -41,6 +43,10 @@ export function parseFilters(params: RawParams): OpportunityFilters {
       (CATEGORY_SLUGS as string[]).includes(c),
     ),
     costBands: list(params.cost).filter((c) => bandIds.includes(c)),
+    incomeBands: list(params.income).filter((c) =>
+      INCOME_BANDS.some((b) => b.id === c),
+    ),
+    timeBands: list(params.time).filter((c) => TIME_BANDS.some((b) => b.id === c)),
     flexibility: list(params.flex).filter((f): f is Flexibility =>
       (FLEXIBILITY_VALUES as string[]).includes(f),
     ),

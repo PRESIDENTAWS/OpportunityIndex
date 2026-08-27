@@ -49,11 +49,10 @@ export default function NewsletterPage() {
         </div>
 
         <HorizonCard
-          eyebrow="Premium Insights"
-          title="Go deeper. Move faster."
-          body="Detailed reports, calculators, and expert-curated opportunities."
-          ctaLabel="See what's included"
-          ctaHref="/about"
+          title="Fewer opinions. More arithmetic."
+          body="Published weights, a date on every figure, and no score anyone can buy."
+          ctaLabel="How we score"
+          ctaHref="/methodology"
           minHeight="20rem"
         />
       </div>

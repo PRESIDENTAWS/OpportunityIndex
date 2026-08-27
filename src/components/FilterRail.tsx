@@ -3,7 +3,13 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { Icon } from "./Icon";
-import { COST_BANDS, FLEXIBILITY_VALUES, flexibilityLabel } from "@/lib/repository";
+import {
+  COST_BANDS,
+  FLEXIBILITY_VALUES,
+  flexibilityLabel,
+  INCOME_BANDS,
+  TIME_BANDS,
+} from "@/lib/repository";
 import type { Category } from "@/lib/types";
 
 interface FilterRailProps {
@@ -56,10 +62,10 @@ export function FilterRail({ categories, variant = "rail", onDone }: FilterRailP
 
   const isChecked = (key: string, value: string) => params.getAll(key).includes(value);
   const activeCount =
-    params.getAll("category").length +
-    params.getAll("cost").length +
-    params.getAll("flex").length +
-    (params.get("q") ? 1 : 0);
+    ["category", "cost", "income", "time", "flex"].reduce(
+      (sum, key) => sum + params.getAll(key).length,
+      0,
+    ) + (params.get("q") ? 1 : 0);
 
   return (
     <div className={variant === "rail" ? "" : "pb-4"}>
@@ -69,7 +75,9 @@ export function FilterRail({ categories, variant = "rail", onDone }: FilterRailP
           type="button"
           onClick={() => {
             const next = new URLSearchParams(params.toString());
-            ["category", "cost", "flex", "q"].forEach((k) => next.delete(k));
+            ["category", "cost", "income", "time", "flex", "q"].forEach((k) =>
+              next.delete(k),
+            );
             commit(next);
           }}
           className="text-xs underline underline-offset-4 disabled:opacity-40"
@@ -129,7 +137,29 @@ export function FilterRail({ categories, variant = "rail", onDone }: FilterRailP
         ))}
       </FilterGroup>
 
-      <FilterGroup title="Flexibility">
+      <FilterGroup title="Income Potential">
+        {INCOME_BANDS.map((band) => (
+          <Checkbox
+            key={band.id}
+            label={band.label}
+            checked={isChecked("income", band.id)}
+            onChange={() => toggle("income", band.id)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Time Required">
+        {TIME_BANDS.map((band) => (
+          <Checkbox
+            key={band.id}
+            label={band.label}
+            checked={isChecked("time", band.id)}
+            onChange={() => toggle("time", band.id)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Location">
         {FLEXIBILITY_VALUES.map((option) => (
           <Checkbox
             key={option}

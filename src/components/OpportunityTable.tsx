@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AdSlot } from "./AdSlot";
 import { Icon } from "./Icon";
 import { ScoreBadge } from "./ScoreBadge";
 import { hoursRange, moneyRange } from "@/lib/format";
@@ -7,8 +6,6 @@ import type { Opportunity } from "@/lib/types";
 
 interface OpportunityTableProps {
   opportunities: Opportunity[];
-  /** Insert an in-content ad after every N rows. 0 disables it. */
-  adEvery?: number;
   /** Ranks are drawn from position in this list unless `startRank` shifts them. */
   startRank?: number;
   /** Drops the redundant Category column for narrower layouts. */
@@ -17,11 +14,9 @@ interface OpportunityTableProps {
 
 export function OpportunityTable({
   opportunities,
-  adEvery = 15,
   startRank = 1,
   compact = false,
 }: OpportunityTableProps) {
-  const columnCount = compact ? 6 : 8;
   if (opportunities.length === 0) {
     return (
       <div
@@ -36,9 +31,6 @@ export function OpportunityTable({
       </div>
     );
   }
-
-  const shouldBreak = (index: number) =>
-    adEvery > 0 && (index + 1) % adEvery === 0 && index + 1 < opportunities.length;
 
   return (
     <>
@@ -67,7 +59,7 @@ export function OpportunityTable({
           </thead>
           <tbody>
             {opportunities.map((o, index) => (
-              <RowGroup key={o.slug} showAd={shouldBreak(index)} adEvery={adEvery} columnCount={columnCount}>
+              <RowGroup key={o.slug}>
                 <tr
                   className="border-t transition-colors hover:bg-[var(--bg-subtle)]"
                   style={{ borderColor: "var(--border)" }}
@@ -150,11 +142,6 @@ export function OpportunityTable({
               </span>
               <ScoreBadge score={o.score} size="sm" />
             </Link>
-            {shouldBreak(index) && (
-              <div className="pt-2">
-                <AdSlot format="in-feed" />
-              </div>
-            )}
           </li>
         ))}
       </ul>
@@ -162,31 +149,7 @@ export function OpportunityTable({
   );
 }
 
-/**
- * A table row plus the optional ad row that follows it. Ads live in the table
- * as a full-width cell so column alignment is never disturbed.
- */
-function RowGroup({
-  children,
-  showAd,
-  adEvery,
-  columnCount,
-}: {
-  children: React.ReactNode;
-  showAd: boolean;
-  adEvery: number;
-  columnCount: number;
-}) {
-  return (
-    <>
-      {children}
-      {showAd && (
-        <tr className="border-t" style={{ borderColor: "var(--border)" }}>
-          <td colSpan={columnCount} className="p-3">
-            <AdSlot format="in-content" note={`Every ${adEvery} Rows`} />
-          </td>
-        </tr>
-      )}
-    </>
-  );
+/** A table row. Kept as a component so the row markup stays one unit. */
+function RowGroup({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
