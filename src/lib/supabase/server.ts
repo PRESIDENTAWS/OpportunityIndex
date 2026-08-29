@@ -3,41 +3,69 @@ import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 /**
- * The server-only Supabase client.
+ * Server-side Supabase clients.
  *
- * It authenticates with `SUPABASE_SECRET_KEY`, which bypasses Row Level
- * Security, so this module must never be imported by a client component. The
- * `server-only` import above turns that mistake into a build error rather than
- * a runtime credential leak.
- *
- * Every monetization table denies `anon` and `authenticated` outright, so this
- * client is the only way the application reads or writes them.
+ * Public content should use the publishable-key client so Row Level Security
+ * remains part of the read path. Privileged monetization/admin operations use
+ * the secret-key client and must never be imported into client components.
  */
 
-let cached: SupabaseClient | null = null;
+let cachedPublic: SupabaseClient | null = null;
+let cachedService: SupabaseClient | null = null;
 
-/** True when the deployment has Supabase credentials configured. */
+/** True when the public/RLS-enforced client can be created. */
+export function isPublicSupabaseConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  );
+}
+
+/** True when the privileged service client can be created. */
 export function isSupabaseConfigured(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SECRET_KEY);
 }
 
 /**
- * Returns the service-role client, or `null` when Supabase is not configured.
+ * Returns the publishable-key client used for public repository reads.
  *
- * Null is a supported state, not an error: local development runs without
- * credentials, and callers degrade gracefully rather than crashing a page.
+ * RLS remains enforced. When credentials are absent (for example local fixture
+ * development or CI builds), callers may deliberately use their fixture
+ * fallback instead of crashing at module load.
+ */
+export function getPublicSupabase(): SupabaseClient | null {
+  if (!isPublicSupabaseConfigured()) return null;
+  if (cachedPublic) return cachedPublic;
+
+  cachedPublic = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { headers: { "X-Client-Info": "opportunity-index-public-server" } },
+    },
+  );
+
+  return cachedPublic;
+}
+
+/**
+ * Returns the secret-key client, or `null` when privileged credentials are not
+ * configured. This client bypasses RLS and is reserved for server-only writes
+ * and private operational tables.
  */
 export function getServerSupabase(): SupabaseClient | null {
   if (!isSupabaseConfigured()) return null;
-  if (cached) return cached;
+  if (cachedService) return cachedService;
 
-  cached = createClient(
+  cachedService = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SECRET_KEY!,
     {
       auth: { persistSession: false, autoRefreshToken: false },
-      global: { headers: { "X-Client-Info": "opportunity-index-server" } },
+      global: { headers: { "X-Client-Info": "opportunity-index-service-server" } },
     },
   );
-  return cached;
+
+  return cachedService;
 }
