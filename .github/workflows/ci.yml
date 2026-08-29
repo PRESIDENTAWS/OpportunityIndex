@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: App checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  database:
+    name: PostgreSQL contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: opportunity_index
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d opportunity_index"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/opportunity_index
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Apply base schema
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/schema.sql
+
+      - name: Seed base dataset
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+
+      - name: Verify base seed idempotency
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+
+      - name: Apply monetization migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0001_monetization.sql
+
+      - name: Apply active scoring-model migration
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/0002_scoring_model.sql
+
+      - name: Assert database invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          opportunities="$(psql "$DATABASE_URL" -Atc 'select count(*) from opportunities;')"
+          factors="$(psql "$DATABASE_URL" -Atc 'select count(*) from scoring_factors;')"
+          weight_sum="$(psql "$DATABASE_URL" -Atc "select to_char(sum(weight), 'FM0.000') from scoring_factors;")"
+          invalid_scores="$(psql "$DATABASE_URL" -Atc 'select count(*) from opportunities where overall_score is null or overall_score < 0 or overall_score > 100;')"
+
+          test "$opportunities" = "26"
+          test "$factors" = "5"
+          test "$weight_sum" = "1.000"
+          test "$invalid_scores" = "0"
+
+          echo "Database contract verified: $opportunities opportunities, $factors active scoring factors, weight sum $weight_sum."

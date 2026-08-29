@@ -1,33 +1,44 @@
 # Opportunity Index
 
-The independent index of side hustles, businesses, franchises, and acquisition
-opportunities — every entry scored on the same six factors, with the formula
-published.
+A decision engine for finding what to build, buy, start, or invest in next.
 
 **Find. Evaluate. Build. Grow.**
 
+The public site is configured through `NEXT_PUBLIC_SITE_URL`; the current production fallback is `https://sidehustleindex.com`.
+
 ---
 
-## What is in this repository
+## Repository map
 
-| Path | What it is |
+| Path | Purpose |
 | --- | --- |
-| [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md) | What the product is, who it serves, and what it deliberately is not |
-| [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) | **The contract.** Conventions, enums, the scoring model, table-by-table detail, and the rules client code must follow |
-| [`docs/LAUNCH_PLAN.md`](docs/LAUNCH_PLAN.md) | Phased plan, sequenced by dependency |
-| [`supabase/schema.sql`](supabase/schema.sql) | Canonical PostgreSQL schema: tables, enums, constraints, indexes, RLS, triggers |
-| [`supabase/seed.sql`](supabase/seed.sql) | Reference data and seed content; idempotent |
-| [`data/opportunities.seed.json`](data/opportunities.seed.json) | Canonical opportunity dataset, 26 records |
-| [`.env.example`](.env.example) | Environment template |
+| [`AGENTS.md`](AGENTS.md) | Engineering contract for human and AI contributors |
+| [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md) | Product scope and non-goals |
+| [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) | Data contract and conventions |
+| [`docs/LAUNCH_PLAN.md`](docs/LAUNCH_PLAN.md) | Original dependency-based launch plan |
+| [`docs/design/FIGMA_INDEX.md`](docs/design/FIGMA_INDEX.md) | Figma files mapped to code ownership |
+| [`docs/design/DESIGN_SYSTEM.md`](docs/design/DESIGN_SYSTEM.md) | Visual/product implementation rules |
+| [`docs/design/PRODUCT_ROADMAP.md`](docs/design/PRODUCT_ROADMAP.md) | Current phased product roadmap |
+| [`docs/design/IMPLEMENTATION_STATUS.md`](docs/design/IMPLEMENTATION_STATUS.md) | What is real vs designed vs planned |
+| [`supabase/schema.sql`](supabase/schema.sql) | Canonical base PostgreSQL schema |
+| [`supabase/seed.sql`](supabase/seed.sql) | Base reference and seed content |
+| [`supabase/migrations/`](supabase/migrations/) | Additive migrations, including the active scoring model |
+| [`data/opportunities.seed.json`](data/opportunities.seed.json) | Canonical opportunity dataset; currently 26 records |
+| [`src/lib/repository.ts`](src/lib/repository.ts) | Single application data-access boundary |
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated app and PostgreSQL contract checks |
 
-`supabase/schema.sql` and `docs/DATA_MODEL.md` are the contract. Application
-code conforms to them, not the reverse. Where the document and the schema
-disagree, the schema wins — it is the executable artifact.
+The executable database contract is the base schema plus migrations applied in order. Application code conforms to that contract, not the reverse.
 
-## Getting a database up
+## Local setup
 
-Requires PostgreSQL 16 or later. **Run from the repository root** — `seed.sql`
-reads `data/opportunities.seed.json` by relative path.
+Requires Node 22+ and PostgreSQL 16+.
+
+```bash
+npm ci
+npm run dev
+```
+
+For a clean database, run from the repository root because `seed.sql` reads `data/opportunities.seed.json` by relative path:
 
 ```bash
 createdb opportunity_index
@@ -35,90 +46,76 @@ export DATABASE_URL=postgresql://localhost/opportunity_index
 
 psql "$DATABASE_URL" -f supabase/schema.sql
 psql "$DATABASE_URL" -f supabase/seed.sql
+psql "$DATABASE_URL" -f supabase/migrations/0001_monetization.sql
+psql "$DATABASE_URL" -f supabase/migrations/0002_scoring_model.sql
 ```
 
-You should end up with:
+`0002_scoring_model.sql` is required. The base schema/seed contain the original six-factor launch model; migration `0002` replaces the published score with the active five-factor MVP model.
 
-| Table | Rows |
-| --- | --- |
-| `categories` | 5 |
-| `scoring_factors` | 6 |
-| `opportunities` | 26 |
-| `opportunity_steps` | 130 |
-| `business_listings` | 6 |
-| `franchises` | 6 |
-| `funding_programs` | 6 |
-| `research_pieces` | 6 |
+## Active scoring model
 
-Re-running `seed.sql` is safe: every insert upserts on its natural key, so it
-refreshes content rather than duplicating or failing.
+Opportunity Score describes the opportunity itself. Match Score describes fit against a user's constraints. They are intentionally separate and must never be blended.
 
-## The scoring model
-
-Six factors, each `0..100`, where **higher is always better for the operator** —
-so a high "Low Startup Cost" score means cheap to start, and a high "Competitive
-Room" score means the field is *not* crowded.
+The active Opportunity Score after migration `0002` is:
 
 | Factor | Weight |
-| --- | --- |
-| Market Demand | 25% |
-| Profit Potential | 22% |
-| Low Startup Cost | 18% |
-| Speed to Revenue | 15% |
-| Scalability | 12% |
-| Competitive Room | 8% |
+| --- | ---: |
+| Income Potential | 27.8% |
+| Startup Affordability | 22.2% |
+| Speed to First Revenue | 22.2% |
+| Demand Durability | 16.7% |
+| Flexibility | 11.1% |
 
-`opportunities.overall_score` is a **generated column**. No client can write it,
-so a published score can never disagree with the factors behind it. A constraint
-trigger holds the weights in `scoring_factors` to a sum of exactly `1.000`.
+`opportunities.overall_score` is a stored generated column. Clients do not write it directly.
 
-Read the score. Never recompute it client-side.
+Flexibility is derived from the canonical enum in the generated expression:
 
-## Security posture
+- `anywhere` → 100
+- `remote` → 70
+- `local` → 30
 
-Row Level Security is enabled on every table.
-
-- Anonymous and authenticated callers read **published rows only**.
-- Anonymous callers cannot write any content.
-- Newsletter signup is the single permitted anonymous write, and there is
-  deliberately no read policy — the subscriber list is not retrievable through
-  the public API.
-- All content writes go through `service_role`.
-
-`SUPABASE_SECRET_KEY` bypasses RLS entirely. It is server-only: never prefixed
-with `NEXT_PUBLIC_`, never imported into a client component, never logged.
+Operational simplicity and experience fit are not currently scored because the canonical dataset does not yet contain defensible ratings for those dimensions.
 
 ## Verification
 
-The schema and seed are validated against a real PostgreSQL 16 instance, not
-just reviewed. The invariants that must keep passing are listed in
-[DATA_MODEL.md § Verification](docs/DATA_MODEL.md#verification) and cover clean
-application, expected row counts, seed idempotency, weight sum, score
-correctness, RLS behaviour for anonymous callers, and constraint enforcement.
+Run locally before opening or updating a PR:
 
-There is **no automated test suite in this repository yet**. CI arrives in
-Phase 3 of the launch plan. Until it exists, no claim that "tests pass" is
-meaningful here.
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
 
-## Branches
+The repository currently contains a substantial Vitest suite; the lean-MVP branch reported 160 passing tests at its latest local verification. Treat that as historical verification, not a substitute for CI on the current commit.
 
-| Branch | Owns |
-| --- | --- |
-| `codex/foundation` | This contract: docs, schema, seed data |
-| `claude/frontend` | The Next.js application |
+GitHub Actions is defined in `.github/workflows/ci.yml` and checks both the application and a disposable PostgreSQL 16 database. A green CI run is the authoritative automated merge signal once the workflow executes.
 
-The frontend was built before this contract existed and holds equivalent data in
-TypeScript modules with different names and shapes. Reconciling it is **Phase 1**
-of the launch plan, which lists the known divergences.
+## Security posture
+
+- Row Level Security is enabled on public-facing data tables.
+- Anonymous/authenticated clients read published content only where policies allow it.
+- Service-role/secret Supabase credentials are server-only.
+- Monetization tables are not public read/write surfaces.
+- Affiliate conversion adapters remain disabled until official webhook specifications are verified.
+- Paid commercial relationships must never modify editorial scoring.
 
 ## Data honesty
 
-Cost, profit, and time figures are researched estimates for a typical solo
-operator in a mid-sized US market. They are not guarantees, not survey averages,
-and not projections for any individual.
+Cost, income, and timing figures are researched/editorial ranges, not guarantees.
 
-Acquisition listings, franchise terms, and lending rates are supplied by third
-parties. Inclusion is not verification.
+Counts shown to users must derive from actual data. Do not ship Figma placeholder numbers, fake ratings, fabricated user totals, unsupported “#1” claims, or unverified partner claims.
 
-Counts shown to readers are derived from the data. If the index holds 26 models,
-the interface says 26.
+Business listings, franchise terms, funding information, and third-party claims require clear provenance and must not be presented as independently verified unless a verification process actually exists.
+
+## Development workflow
+
+`main` is release history. Develop on focused feature branches and open pull requests.
+
+Current priority after the lean MVP is merged:
+
+```text
+CI → Supabase → dataset expansion → core UI alignment → compare → accounts/saved → Pro → monetization → marketplace → admin → AI → public data products
+```
+
+See `AGENTS.md` for contributor rules and `docs/design/IMPLEMENTATION_STATUS.md` before implementing future-state Figma screens.
