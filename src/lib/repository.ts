@@ -6,11 +6,15 @@ import {
   rateAll,
   SCORING_MODEL,
 } from "./scoring-model";
+import { getPublicSupabase } from "./supabase/server";
 import type {
+  CategoryRow,
   CategorySlug,
   Flexibility,
   FundingProgramRow,
   OpportunityRow,
+  OpportunityStepRow,
+  ScoringFactorRow,
 } from "./contract";
 import type {
   Category,
@@ -22,46 +26,146 @@ import type {
 /**
  * The single data-access boundary.
  *
- * Every page and component reads domain data through this module and nothing
- * else — no route imports a dataset directly. Functions are async so that
- * swapping the fixture source for Supabase in Phase 2 changes this file and
- * nothing that calls it.
- *
- * Responsibilities, in order:
- *   1. Load contract-shaped rows (fixtures today, Postgres later)
- *   2. Translate snake_case rows to camelCase domain objects, exactly once
- *   3. Apply filtering and sorting
+ * Production reads public content from Supabase through the publishable-key
+ * client, so Row Level Security remains enforced. When public Supabase
+ * credentials are absent, local development and CI use the canonical fixtures.
+ * A configured Supabase query failure is not hidden behind fixtures: it throws.
  */
 
 // -----------------------------------------------------------------------------
-// Fixture source
+// Canonical fixture fallback
 // -----------------------------------------------------------------------------
 
-/**
- * Opportunities come from `data/opportunities.seed.json` — the same file
- * `supabase/seed.sql` loads into the database, so the fixture and the seed
- * cannot drift.
- */
 type SeedOpportunity = Omit<OpportunityRow, "overall_score">;
 
 const SEED_OPPORTUNITIES = (seed as { opportunities: SeedOpportunity[] }).opportunities;
 
-/**
- * Stands in for `opportunities.overall_score`, which Postgres generates.
- *
- * The arithmetic lives in src/lib/scoring-model.ts, so this cannot disagree
- * with the model the site publishes. When Supabase is connected, the column is
- * read from the database and this mapping drops the `overall_score` line.
- */
-const OPPORTUNITY_ROWS: OpportunityRow[] = SEED_OPPORTUNITIES.map((row) => ({
+const FIXTURE_OPPORTUNITY_ROWS: OpportunityRow[] = SEED_OPPORTUNITIES.map((row) => ({
   ...row,
   overall_score: computeOverallScore(row),
 }));
 
+const FIXTURE_SCORING_ROWS: ScoringFactorRow[] = SCORING_MODEL.map(
+  ({ key, label, description, weight }, index) => ({
+    key,
+    label,
+    description,
+    weight,
+    sort_order: index + 1,
+  }),
+);
+
+type SupabaseOpportunityRecord = Omit<OpportunityRow, "steps"> & {
+  opportunity_steps: OpportunityStepRow[] | null;
+};
+
+function databaseFailure(context: string, error: { message?: string }): never {
+  throw new Error(`Supabase ${context} failed: ${error.message ?? "unknown error"}`);
+}
+
+async function loadCategoryRows(): Promise<CategoryRow[]> {
+  const supabase = getPublicSupabase();
+  if (!supabase) return [...CATEGORY_ROWS] as CategoryRow[];
+
+  const { data, error } = await supabase
+    .from("categories")
+    .select("slug,label,description,sort_order")
+    .order("sort_order", { ascending: true });
+
+  if (error) databaseFailure("category read", error);
+  return (data ?? []) as CategoryRow[];
+}
+
+async function loadScoringFactorRows(): Promise<ScoringFactorRow[]> {
+  const supabase = getPublicSupabase();
+  if (!supabase) return FIXTURE_SCORING_ROWS;
+
+  const { data, error } = await supabase
+    .from("scoring_factors")
+    .select("key,label,description,weight,sort_order")
+    .order("sort_order", { ascending: true });
+
+  if (error) databaseFailure("scoring-factor read", error);
+  return (data ?? []) as ScoringFactorRow[];
+}
+
+async function loadOpportunityRows(): Promise<OpportunityRow[]> {
+  const supabase = getPublicSupabase();
+  if (!supabase) return FIXTURE_OPPORTUNITY_ROWS;
+
+  const { data, error } = await supabase
+    .from("opportunities")
+    .select(`
+      slug,
+      name,
+      tagline,
+      icon,
+      category_slug,
+      startup_cost_min,
+      startup_cost_max,
+      startup_cost_open_ended,
+      monthly_profit_min,
+      monthly_profit_max,
+      monthly_profit_open_ended,
+      hours_per_week_min,
+      hours_per_week_max,
+      flexibility,
+      summary,
+      factor_demand,
+      factor_profit_potential,
+      factor_startup_cost,
+      factor_time_to_revenue,
+      factor_scalability,
+      factor_competition,
+      overall_score,
+      skills,
+      pros,
+      cons,
+      tools,
+      reviewed_at,
+      opportunity_steps(position,title,detail)
+    `);
+
+  if (error) databaseFailure("opportunity read", error);
+
+  return ((data ?? []) as SupabaseOpportunityRecord[]).map(
+    ({ opportunity_steps, ...row }) => ({
+      ...row,
+      steps: opportunity_steps ?? [],
+    }),
+  );
+}
+
+async function loadFundingRows(): Promise<FundingProgramRow[]> {
+  const supabase = getPublicSupabase();
+  if (!supabase) return [...FUNDING_PROGRAM_ROWS];
+
+  const { data, error } = await supabase
+    .from("funding_programs")
+    .select(`
+      slug,
+      name,
+      funding_type,
+      amount_min,
+      amount_max,
+      typical_rate,
+      speed,
+      min_credit_score,
+      time_in_business,
+      best_for,
+      summary,
+      requirements,
+      reviewed_at
+    `)
+    .order("name", { ascending: true });
+
+  if (error) databaseFailure("funding-program read", error);
+  return (data ?? []) as FundingProgramRow[];
+}
+
 // -----------------------------------------------------------------------------
 // Display labels for enum values
 // -----------------------------------------------------------------------------
-// Enum labels are stored lowercase; capitalisation is presentation-only.
 
 const FLEXIBILITY_LABELS: Record<Flexibility, string> = {
   anywhere: "Anywhere",
@@ -77,20 +181,21 @@ export function flexibilityLabel(value: Flexibility): string {
 // Row -> domain mappers
 // -----------------------------------------------------------------------------
 
-const CATEGORY_LABELS = new Map(CATEGORY_ROWS.map((c) => [c.slug, c.label]));
-
-function toCategory(row: (typeof CATEGORY_ROWS)[number]): Category {
+function toCategory(row: CategoryRow): Category {
   return { slug: row.slug, label: row.label, description: row.description };
 }
 
-function toOpportunity(row: OpportunityRow): Opportunity {
+function toOpportunity(
+  row: OpportunityRow,
+  categoryLabels: ReadonlyMap<CategorySlug, string>,
+): Opportunity {
   return {
     slug: row.slug,
     name: row.name,
     tagline: row.tagline,
     icon: row.icon,
     categorySlug: row.category_slug,
-    categoryLabel: CATEGORY_LABELS.get(row.category_slug) ?? row.category_slug,
+    categoryLabel: categoryLabels.get(row.category_slug) ?? row.category_slug,
     startupCost: {
       min: row.startup_cost_min,
       max: row.startup_cost_max,
@@ -133,6 +238,16 @@ function toFundingProgram(row: FundingProgramRow): FundingProgram {
   };
 }
 
+function categoryLabelMap(rows: CategoryRow[]): Map<CategorySlug, string> {
+  return new Map(rows.map((category) => [category.slug, category.label]));
+}
+
+async function loadOpportunityDomainRows(): Promise<Opportunity[]> {
+  const [rows, categories] = await Promise.all([loadOpportunityRows(), loadCategoryRows()]);
+  const labels = categoryLabelMap(categories);
+  return rows.map((row) => toOpportunity(row, labels));
+}
+
 // -----------------------------------------------------------------------------
 // Filtering vocabulary
 // -----------------------------------------------------------------------------
@@ -170,11 +285,6 @@ export interface Band {
   max: number;
 }
 
-/**
- * Income-potential bands, matched against each opportunity's realistic monthly
- * ceiling. "Up to $2,000" means the ceiling lands in that band, not that the
- * opportunity can never exceed it.
- */
 export const INCOME_BANDS: Band[] = [
   { id: "to-2000", label: "Up to $2,000 / mo", min: 0, max: 2_000 },
   { id: "2000-5000", label: "$2,000 – $5,000 / mo", min: 2_000, max: 5_000 },
@@ -182,7 +292,6 @@ export const INCOME_BANDS: Band[] = [
   { id: "10000-plus", label: "$10,000+ / mo", min: 10_000, max: Infinity },
 ];
 
-/** Time bands, matched against the minimum hours an opportunity needs. */
 export const TIME_BANDS: Band[] = [
   { id: "to-10", label: "Under 10 hrs / week", min: 0, max: 10 },
   { id: "10-20", label: "10 – 20 hrs / week", min: 10, max: 20 },
@@ -204,18 +313,16 @@ export interface OpportunityFilters {
 // -----------------------------------------------------------------------------
 
 export async function getCategories(): Promise<Category[]> {
-  return [...CATEGORY_ROWS]
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .map(toCategory);
+  return (await loadCategoryRows()).map(toCategory);
 }
 
 export async function getCategory(slug: string): Promise<Category | undefined> {
-  const row = CATEGORY_ROWS.find((c) => c.slug === slug);
+  const row = (await loadCategoryRows()).find((category) => category.slug === slug);
   return row ? toCategory(row) : undefined;
 }
 
 export async function getScoringFactors(): Promise<ScoringFactor[]> {
-  return SCORING_MODEL.map(({ key, label, description, weight }) => ({
+  return (await loadScoringFactorRows()).map(({ key, label, description, weight }) => ({
     key,
     label,
     description,
@@ -234,31 +341,25 @@ function matchesSearch(o: Opportunity, term: string): boolean {
     .includes(term);
 }
 
-/**
- * A startup cost falls in a band when its floor does. Testing the minimum keeps
- * "$0 – $500" from matching a business that merely starts within reach of it.
- */
 function matchesCostBand(o: Opportunity, bandIds: string[]): boolean {
   return bandIds.some((id) => {
-    const band = COST_BANDS.find((b) => b.id === id);
+    const band = COST_BANDS.find((candidate) => candidate.id === id);
     if (!band) return false;
     return o.startupCost.min >= band.min && o.startupCost.min < band.max;
   });
 }
 
-/** An opportunity's income ceiling falls inside one of the selected bands. */
 function matchesIncomeBand(o: Opportunity, bandIds: string[]): boolean {
   return bandIds.some((id) => {
-    const band = INCOME_BANDS.find((b) => b.id === id);
+    const band = INCOME_BANDS.find((candidate) => candidate.id === id);
     if (!band) return false;
     return o.monthlyProfit.max >= band.min && o.monthlyProfit.max < band.max;
   });
 }
 
-/** The hours an opportunity needs at minimum fall inside a selected band. */
 function matchesTimeBand(o: Opportunity, bandIds: string[]): boolean {
   return bandIds.some((id) => {
-    const band = TIME_BANDS.find((b) => b.id === id);
+    const band = TIME_BANDS.find((candidate) => candidate.id === id);
     if (!band) return false;
     return o.hoursPerWeek.min >= band.min && o.hoursPerWeek.min < band.max;
   });
@@ -284,51 +385,57 @@ function sortOpportunities(list: Opportunity[], sort: SortKey): Opportunity[] {
 export async function listOpportunities(
   filters: OpportunityFilters = {},
 ): Promise<Opportunity[]> {
-  let results = OPPORTUNITY_ROWS.map(toOpportunity);
+  let results = await loadOpportunityDomainRows();
 
   const term = filters.search?.trim().toLowerCase();
-  if (term) results = results.filter((o) => matchesSearch(o, term));
+  if (term) results = results.filter((opportunity) => matchesSearch(opportunity, term));
   if (filters.categories?.length) {
-    results = results.filter((o) => filters.categories!.includes(o.categorySlug));
+    results = results.filter((opportunity) =>
+      filters.categories!.includes(opportunity.categorySlug),
+    );
   }
   if (filters.costBands?.length) {
-    results = results.filter((o) => matchesCostBand(o, filters.costBands!));
+    results = results.filter((opportunity) => matchesCostBand(opportunity, filters.costBands!));
   }
   if (filters.incomeBands?.length) {
-    results = results.filter((o) => matchesIncomeBand(o, filters.incomeBands!));
+    results = results.filter((opportunity) =>
+      matchesIncomeBand(opportunity, filters.incomeBands!),
+    );
   }
   if (filters.timeBands?.length) {
-    results = results.filter((o) => matchesTimeBand(o, filters.timeBands!));
+    results = results.filter((opportunity) => matchesTimeBand(opportunity, filters.timeBands!));
   }
   if (filters.flexibility?.length) {
-    results = results.filter((o) => filters.flexibility!.includes(o.flexibility));
+    results = results.filter((opportunity) =>
+      filters.flexibility!.includes(opportunity.flexibility),
+    );
   }
 
   return sortOpportunities(results, filters.sort ?? "score");
 }
 
 export async function countOpportunities(): Promise<number> {
-  return OPPORTUNITY_ROWS.length;
+  return (await loadOpportunityRows()).length;
 }
 
 export async function getOpportunity(slug: string): Promise<Opportunity | undefined> {
-  const row = OPPORTUNITY_ROWS.find((o) => o.slug === slug);
-  return row ? toOpportunity(row) : undefined;
+  return (await loadOpportunityDomainRows()).find((opportunity) => opportunity.slug === slug);
 }
 
 export async function getOpportunitySlugs(): Promise<string[]> {
-  return OPPORTUNITY_ROWS.map((o) => o.slug);
+  return (await loadOpportunityRows()).map((opportunity) => opportunity.slug);
 }
 
-/** Same category first, then nearest score — used for "Compare with". */
 export async function getRelatedOpportunities(
   slug: string,
   limit = 3,
 ): Promise<Opportunity[]> {
-  const target = await getOpportunity(slug);
+  const opportunities = await loadOpportunityDomainRows();
+  const target = opportunities.find((opportunity) => opportunity.slug === slug);
   if (!target) return [];
-  return OPPORTUNITY_ROWS.map(toOpportunity)
-    .filter((o) => o.slug !== slug)
+
+  return opportunities
+    .filter((opportunity) => opportunity.slug !== slug)
     .sort((a, b) => {
       const sameCategory =
         Number(b.categorySlug === target.categorySlug) -
@@ -342,10 +449,14 @@ export async function getRelatedOpportunities(
 export async function getCategoryCounts(): Promise<
   { category: Category; count: number }[]
 > {
-  const categories = await getCategories();
-  return categories.map((category) => ({
-    category,
-    count: OPPORTUNITY_ROWS.filter((o) => o.category_slug === category.slug).length,
+  const [categories, opportunities] = await Promise.all([
+    loadCategoryRows(),
+    loadOpportunityRows(),
+  ]);
+
+  return categories.map((row) => ({
+    category: toCategory(row),
+    count: opportunities.filter((opportunity) => opportunity.category_slug === row.slug).length,
   }));
 }
 
@@ -354,17 +465,16 @@ export async function getCategoryCounts(): Promise<
 // -----------------------------------------------------------------------------
 
 export async function listFundingPrograms(): Promise<FundingProgram[]> {
-  return FUNDING_PROGRAM_ROWS.map(toFundingProgram);
+  return (await loadFundingRows()).map(toFundingProgram);
 }
 
 export async function getFundingProgram(
   slug: string,
 ): Promise<FundingProgram | undefined> {
-  const row = FUNDING_PROGRAM_ROWS.find((f) => f.slug === slug);
+  const row = (await loadFundingRows()).find((funding) => funding.slug === slug);
   return row ? toFundingProgram(row) : undefined;
 }
 
 export async function getFundingProgramSlugs(): Promise<string[]> {
-  return FUNDING_PROGRAM_ROWS.map((f) => f.slug);
+  return (await loadFundingRows()).map((funding) => funding.slug);
 }
-

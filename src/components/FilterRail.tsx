@@ -9,7 +9,7 @@ import {
   flexibilityLabel,
   INCOME_BANDS,
   TIME_BANDS,
-} from "@/lib/repository";
+} from "@/lib/filter-options";
 import type { Category } from "@/lib/types";
 
 interface FilterRailProps {
@@ -94,7 +94,6 @@ export function FilterRail({ categories, variant = "rail", onDone }: FilterRailP
         </label>
         <div className="relative">
           <input
-            /* Remounting on a new q resets the field to match the URL. */
             key={activeSearch}
             id={`filter-search-${variant}`}
             name="q"
