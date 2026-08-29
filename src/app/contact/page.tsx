@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Card, PageHeader } from "@/components/PageShell";
+import { siteEmail } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -7,10 +8,10 @@ export const metadata: Metadata = {
 };
 
 const ROUTES = [
-  { subject: "Corrections", body: "A figure looks wrong, or an entry is out of date.", email: "corrections@opportunityindex.com" },
-  { subject: "Listings", body: "Submit a business for sale or a franchise concept.", email: "listings@opportunityindex.com" },
-  { subject: "Advertising", body: "Placements, sponsorships, and flight dates.", email: "advertise@opportunityindex.com" },
-  { subject: "Press & research", body: "Citing the index or requesting underlying data.", email: "research@opportunityindex.com" },
+  { subject: "Corrections", body: "A figure looks wrong, or an entry is out of date.", email: siteEmail("corrections") },
+  { subject: "Listings", body: "Submit a business for sale or a franchise concept.", email: siteEmail("listings") },
+  { subject: "Advertising", body: "Placements, sponsorships, and flight dates.", email: siteEmail("advertise") },
+  { subject: "Press & research", body: "Citing the index or requesting underlying data.", email: siteEmail("research") },
 ];
 
 export default function ContactPage() {

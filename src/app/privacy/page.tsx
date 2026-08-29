@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageShell";
 import { Prose } from "@/components/Prose";
+import { SITE_DOMAIN, siteEmail } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -14,7 +15,7 @@ export default function PrivacyPage() {
       <div className="container-oi py-8">
         <Prose>
           <p>
-            Last updated August 2026. This policy covers opportunityindex.com.
+            Last updated August 2026. This policy covers {SITE_DOMAIN}.
           </p>
 
           <h2>What we collect</h2>
@@ -49,7 +50,7 @@ export default function PrivacyPage() {
           <h2>Your choices</h2>
           <p>
             Every newsletter has a one-click unsubscribe. To request deletion of any
-            data we hold about you, email privacy@opportunityindex.com and we will
+            data we hold about you, email {siteEmail("privacy")} and we will
             action it within 30 days.
           </p>
         </Prose>

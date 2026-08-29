@@ -5,6 +5,7 @@ import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { themeScript } from "@/components/ThemeToggle";
+import { SITE_URL } from "@/lib/site";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -13,7 +14,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://opportunityindex.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Opportunity Index — Find. Evaluate. Build. Grow.",
     template: "%s | Opportunity Index",
